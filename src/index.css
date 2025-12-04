@@ -1,0 +1,54 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html {
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+@theme inline {
+  --animate-cell-ripple: cell-ripple var(--duration, 200ms) ease-out none 1
+  var(--delay, 0ms);
+
+  @keyframes cell-ripple {
+    0% {
+      opacity: 0.4;
+    }
+    50% {
+      opacity: 0.8;
+    }
+    100% {
+      opacity: 0.4;
+    }
+  }
+}
+@keyframes meteorEffect {
+  0% {
+    transform: translateY(0) translateX(0) rotate(45deg);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(100vh) translateX(200px) rotate(45deg);
+    opacity: 0;
+  }
+}
+
+.animate-meteor-effect {
+  animation: meteorEffect linear infinite;
+}
+/* 
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Inter', sans-serif;
+  overflow-x: hidden;
+}
+
+img {
+  max-width: 100%;
+  height: auto;
+} */
