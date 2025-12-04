@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { FcGoogle } from "react-icons/fc";
 import { signInWithPopup } from "firebase/auth";
-import {auth, provider } from "../../firebase.js";
 function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
