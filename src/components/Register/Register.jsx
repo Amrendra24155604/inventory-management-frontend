@@ -2,7 +2,6 @@ import { useState } from "react";
 import { FcGoogle } from "react-icons/fc";
 import { signInWithPopup } from "firebase/auth";
 import { useNavigate } from "react-router-dom";
-import { auth, provider } from "../../firebase.js";
 
 function Register() {
   const [name, setName] = useState("");
