@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { FcGoogle } from "react-icons/fc";
-import { signInWithPopup } from "firebase/auth";
-function Login() {
+import { auth, provider } from "../../firebase.js";
+import { signInWithPopup } from "firebase/auth";function Login() {
     const API_PORT= import.meta.env.VITE_API_PORT;
 
   const [email, setEmail] = useState("");

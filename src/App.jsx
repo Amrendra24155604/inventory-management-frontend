@@ -34,6 +34,7 @@ import BackgroundRippleEffectDemo  from "./components/background-ripple-effect/B
 function AppContent({ sidebarOpen, user }) {
   const location = useLocation();
   const [loading, setLoading] = useState(false);
+   const API_PORT= import.meta.env.VITE_API_PORT;
 
   useEffect(() => {
     setLoading(true);
@@ -104,7 +105,7 @@ function App() {
   useEffect(() => {
     const fetchUser = async () => {
       try {
-        const res = await fetch("http://localhost:8000/api/v1/auth/current-user", {
+        const res = await fetch(`${API_PORT}/api/v1/auth/current-user`, {
           method: "POST",
           credentials: "include",
         });
