@@ -1,6 +1,8 @@
 import { useState, useEffect } from "react";
 
 function CompleteProfile() {
+  const API_PORT= import.meta.env.VITE_API_PORT;
+
   const [name, setFullName] = useState("");
   const [rollNumber, setRollNumber] = useState("");
   const [domain, setDomain] = useState("");
@@ -27,6 +29,7 @@ function CompleteProfile() {
 
   useEffect(() => {
     const fetchProfile = async () => {
+
       try {
         const response = await fetch(`${API_PORT}/api/v1/auth/current-user`, {
           method: "POST",
