@@ -185,7 +185,12 @@ function CompleteProfile() {
             </>
           ) : (
             <>
-              {/* Display profile */}
+              {/* Admin Badge */}
+        {profileData.role === "admin" && (
+          <div className="absolute -top-6 left-1/2 transform -translate-x-1/2 px-6 py-2 rounded-full bg-gradient-to-r from-indigo-600 via-purple-700 to-indigo-600 text-white text-sm font-semibold tracking-wide shadow-lg ring-2 ring-purple-400/60 backdrop-blur-md border border-white/10 transition-all duration-300 hover:scale-105 hover:shadow-xl hover:brightness-110">
+            Admin
+          </div>
+        )}
               <h2 className="text-4xl font-bold text-center text-indigo-600 dark:text-white mb-10">
                 Your Profile
               </h2>
