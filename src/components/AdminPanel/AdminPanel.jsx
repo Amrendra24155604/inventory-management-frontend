@@ -6,20 +6,20 @@ export default function AdminBorrowPanel() {
   const [requests, setRequests] = useState([]);
 
   useEffect(() => {
-    fetch("/api/borrow/all", { credentials: "include" })
+    fetch(`${API_PORT}/api/borrow/all`, { credentials: "include" })
       .then((res) => res.json())
       .then((data) => setRequests(data.data));
   }, []);
 
   const handleApprove = async (id) => {
-    await fetch(`/api/borrow/${id}/approve`, {
+    await fetch(`${API_PORT}/api/borrow/${id}/approve`, {
       method: "PATCH",
       credentials: "include",
     });
   };
 
   const handleReturnApprove = async (id) => {
-    await fetch(`/api/borrow/${id}/return/approve`, {
+    await fetch(`${API_PORT}/api/borrow/${id}/return/approve`, {
       method: "PATCH",
       credentials: "include",
     });
