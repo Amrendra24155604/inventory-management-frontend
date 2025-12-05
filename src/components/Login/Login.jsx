@@ -2,6 +2,8 @@ import { useState } from "react";
 import { FcGoogle } from "react-icons/fc";
 import { signInWithPopup } from "firebase/auth";
 function Login() {
+    const API_PORT= import.meta.env.VITE_API_PORT;
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [name, setName] = useState("");
@@ -15,7 +17,7 @@ const handleGoogleLoginOnly = async () => {
     const result = await signInWithPopup(auth, provider);
     const user = result.user;
 
-    const response = await fetch("http://localhost:8000/api/v1/auth/google-login", {
+    const response = await fetch(`${API_PORT}/api/v1/auth/google-login`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       credentials: "include",
@@ -46,7 +48,7 @@ const handleGoogleLoginOnly = async () => {
   const handleLogin = async () => {
     setErrorMessages([]);
     try {
-      const response = await fetch("http://localhost:8000/api/v1/auth/login", {
+      const response = await fetch(`${API_PORT}/api/v1/auth/login`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
