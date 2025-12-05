@@ -15,7 +15,6 @@ import Teams from "./components/Teams/Teams.jsx";
 import AdminRequestPage from "./components/AdminRequestPage/AdminRequestPage.jsx";
 import AdminProductPage from "./components/AdminProductList/AdminProductPage.jsx";
 import { FloatingDock } from "./components/Floating-docs/Floating-docs.jsx";
-import { TbHistoryToggle } from 'react-icons/tb';
 import VerifyEmail from "./components/verifyemail/VerifyEmail.jsx";
 import EmailVerified from "./components/EmailVerified/EmailVerified.jsx";
 import AdminBorrowApproval from "./components/BorrowApproval/BorrowApprovalPage.jsx";
@@ -30,11 +29,11 @@ import BorrowList from "./components/UserBorrowList/UserBorrowList.jsx";
 import { MdApproval } from "react-icons/md";
 import { ThemeProvider } from "./context/ThemeContext.jsx";
 import Inventory from "./components/Inventory/Inventory.jsx";
-import BackgroundRippleEffectDemo  from "./components/background-ripple-effect/Background-ripple-effect.jsx";
+
 function AppContent({ sidebarOpen, user }) {
   const location = useLocation();
   const [loading, setLoading] = useState(false);
-   const API_PORT= import.meta.env.VITE_API_PORT;
+  const API_PORT = import.meta.env.VITE_API_PORT;
 
   useEffect(() => {
     setLoading(true);
@@ -45,6 +44,10 @@ function AppContent({ sidebarOpen, user }) {
   const excludedPaths = ["/login", "/register"];
   const showDock = !excludedPaths.includes(location.pathname);
 
+  // Log current location and user
+  console.log("📍 Current path:", location.pathname);
+  console.log("👤 Current user:", user);
+
   const dockItems = [
     { title: "Teams", href: "/teams", icon: <IconUsersGroup /> },
     { title: "My Borrows", href: "/borrow", icon: <IconShoppingCart /> },
@@ -52,19 +55,25 @@ function AppContent({ sidebarOpen, user }) {
   ];
 
   if (user?.role === "admin") {
-    dockItems.push({
-      title: "Product Listing",
-      href: "/admin/products",
-      icon: <IconListDetails />,
-    },
- {
-      title: "Borrow Approvals",
-      href: "/borrow-approval",
-      icon: <MdApproval />, // Approval icon from react-icons
-    }
-
-  );
+    console.log("✅ User is admin, adding admin dock items...");
+    dockItems.push(
+      {
+        title: "Product Listing",
+        href: "/admin/products",
+        icon: <IconListDetails />,
+      },
+      {
+        title: "Borrow Approvals",
+        href: "/borrow-approval",
+        icon: <MdApproval />,
+      }
+    );
+  } else {
+    console.log("ℹ️ User is not admin, only showing default dock items.");
   }
+
+  // Log final dockItems array
+  console.log("🛠️ Dock items being rendered:", dockItems);
 
   return (
     <div className="transition-all duration-300">
@@ -72,7 +81,6 @@ function AppContent({ sidebarOpen, user }) {
       {loading ? (
         <ProcessingIcon />
       ) : (
-
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/about" element={<About />} />
@@ -88,9 +96,12 @@ function AppContent({ sidebarOpen, user }) {
           <Route path="/borrow" element={<BorrowList />} />
           <Route path="/inventory" element={<Inventory />} />
           <Route path="/borrow-approval" element={<AdminBorrowApproval />} />
-<Route path="/verify-email" element={<VerifyEmail />} />
-<Route path="/email-verified/:verificationToken" element={<EmailVerified />} />
- </Routes>
+          <Route path="/verify-email" element={<VerifyEmail />} />
+          <Route
+            path="/email-verified/:verificationToken"
+            element={<EmailVerified />}
+          />
+        </Routes>
       )}
       {showDock && !loading && <FloatingDock items={dockItems} />}
       <Footer />
@@ -101,19 +112,22 @@ function AppContent({ sidebarOpen, user }) {
 function App() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [user, setUser] = useState(null);
+  const API_PORT = import.meta.env.VITE_API_PORT;
 
   useEffect(() => {
     const fetchUser = async () => {
       try {
+        console.log("🔄 Fetching current user from:", `${API_PORT}/api/v1/auth/current-user`);
         const res = await fetch(`${API_PORT}/api/v1/auth/current-user`, {
           method: "POST",
           credentials: "include",
         });
         if (!res.ok) throw new Error("Unauthorized");
         const data = await res.json();
+        console.log("✅ User fetched successfully:", data.data);
         setUser(data.data);
       } catch (err) {
-        console.warn("User not logged in");
+        console.warn("⚠️ User not logged in or fetch failed:", err.message);
         setUser(null);
       }
     };

@@ -4,20 +4,22 @@ import {
   IconBoxSeam,
   IconArrowBackUp,
   IconShoppingCart,
+  IconListDetails,
 } from "@tabler/icons-react";
+import { MdApproval } from "react-icons/md";
+import { useMemo } from "react";
 
-const dockItems = [
-  { title: "Teams", href: "/teams", icon: <IconUsersGroup /> },
-  { title: "Borrow", href: "/borrow", icon: <IconShoppingCart /> },
-  { title: "Return", href: "/return", icon: <IconArrowBackUp /> },
-  { title: "Inventory", href: "/inventory", icon: <IconBoxSeam /> },
-];
-
-export default function MainLayout({ children }) {
-  return (
-    <>
-      {children}
-      <FloatingDock items={dockItems} />
-    </>
-  );
-}
+const dockItems = useMemo(() => {
+  const items = [
+    { title: "Teams", href: "/teams", icon: <IconUsersGroup /> },
+    { title: "My Borrows", href: "/borrow", icon: <IconShoppingCart /> },
+    { title: "Inventory", href: "/inventory", icon: <IconBoxSeam /> },
+  ];
+  if (user?.role === "admin") {
+    items.push(
+      { title: "Product Listing", href: "/admin/products", icon: <IconListDetails /> },
+      { title: "Borrow Approvals", href: "/borrow-approval", icon: <MdApproval /> }
+    );
+  }
+  return items;
+}, [user]);

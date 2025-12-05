@@ -15,7 +15,7 @@ export default function ViewAdminRequests() {
   const fetchRequests = async () => {
     setLoading(true);
     try {
-      const res = await fetct(`${API_PORT}/api/v1/auth/admin/requests`, {
+      const res = await fetch(`${API_PORT}/api/v1/auth/admin/requests`, {
         headers: { Authorization: `Bearer ${token}` },
         credentials: "include",
       });
@@ -117,7 +117,7 @@ export default function ViewAdminRequests() {
                     Accept
                   </button>
                   <button
-                    onClick={() => handleAction(user._id, "declin")}
+                    onClick={() => handleAction(user._id, "decline")}
                     disabled={actioningId === user._id}
                     className="flex items-center gap-2 px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded transition"
                   >
@@ -139,7 +139,7 @@ export default function ViewAdminRequests() {
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: 20 }}
       transition={{ duration: 0.4 }}
-      className="ixed bottom-10 inset-x-0 flex justify-center z-[999]"
+      className="fixed bottom-10 inset-x-0 flex justify-center z-[999]"
     >
       <div className="bg-indigo-600 text-white px-6 py-3 rounded-full shadow-lg">
         {adminRequestMessage}
