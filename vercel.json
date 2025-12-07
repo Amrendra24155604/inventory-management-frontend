@@ -1,0 +1,5 @@
+{
+  "rewrites": [
+    { "source": "/api/:path*", "destination": "https://inventory-management-backend-18.onrender.com/api/:path*" }
+  ]
+}
