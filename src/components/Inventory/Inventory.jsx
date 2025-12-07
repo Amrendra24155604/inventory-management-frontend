@@ -80,7 +80,7 @@ export default function Inventory() {
     if (items.length === 0) return;
 
     try {
-      const res = await fetch(`${API_PORT}/api/v1/auth/`, {
+      const res = await fetch(`${API_PORT}/api/v1/auth/borrow`, {
         method: "POST",
         credentials: "include",
         headers: { "Content-Type": "application/json" },
