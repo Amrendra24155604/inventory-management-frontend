@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { FcGoogle } from "react-icons/fc";
+import { auth, provider } from "../../../firebase.js";
 import { signInWithPopup } from "firebase/auth";
 import { useNavigate } from "react-router-dom";
 
@@ -10,6 +11,7 @@ function Register() {
   const [errorMessages, setErrorMessages] = useState([]);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+    const API_PORT= import.meta.env.VITE_API_PORT;
 
  const handleRegister = async () => {
   setErrorMessages([]);
@@ -27,7 +29,7 @@ function Register() {
 
     if (response.ok) {
       alert("Registration successful! Please check your email to verify your account.");
-      navigate("/verify-email"); // ✅ No redirect to /verify-email
+      navigate("/verify-email"); 
     } else {
       const messages = Array.isArray(result.errors) ? result.errors : [result.message];
       setErrorMessages(messages);
