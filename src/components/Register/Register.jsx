@@ -11,37 +11,43 @@ function Register() {
   const [errorMessages, setErrorMessages] = useState([]);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
-    const API_PORT= import.meta.env.VITE_API_PORT;
 
- const handleRegister = async () => {
-  setErrorMessages([]);
-  setLoading(true);
+  // Environment variable for backend API
+  const API_PORT = import.meta.env.VITE_API_PORT;
 
-  try {
-    const response = await fetch(`${API_PORT}/api/v1/auth/register`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      credentials: "include",
-      body: JSON.stringify({ username: name, email, password }),
-    });
+  // Normal registration
+  const handleRegister = async () => {
+    setErrorMessages([]);
+    setLoading(true);
 
-    const result = await response.json();
+    try {
+      const response = await fetch(`${API_PORT}/api/v1/auth/register`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({ username: name, email, password }),
+      });
 
-    if (response.ok) {
-      alert("Registration successful! Please check your email to verify your account.");
-      navigate("/verify-email"); 
-    } else {
-      const messages = Array.isArray(result.errors) ? result.errors : [result.message];
-      setErrorMessages(messages);
+      const result = await response.json();
+
+      if (response.ok) {
+        alert("Registration successful! Please check your email to verify your account.");
+        navigate("/verify-email");
+      } else {
+        const messages = Array.isArray(result.errors)
+          ? result.errors
+          : [result.message || "Registration failed"];
+        setErrorMessages(messages);
+      }
+    } catch (error) {
+      console.error("Registration error:", error);
+      setErrorMessages(["Registration failed. Please try again."]);
+    } finally {
+      setLoading(false);
     }
-  } catch (error) {
-    console.error("Registration error:", error);
-    setErrorMessages(["Registration failed. Please try again."]);
-  } finally {
-    setLoading(false);
-  }
-};
+  };
 
+  // Google registration
   const handleGoogleLogin = async () => {
     setErrorMessages([]);
     setLoading(true);
@@ -56,7 +62,9 @@ function Register() {
         credentials: "include",
         body: JSON.stringify({
           email: user.email,
-          username: user.displayName.toLowerCase().replace(/\s+/g, ""),
+          username: user.displayName
+            ? user.displayName.toLowerCase().replace(/\s+/g, "")
+            : user.email.split("@")[0], // fallback if displayName is null
           googleId: user.uid,
         }),
       });
@@ -127,7 +135,9 @@ function Register() {
         {errorMessages.length > 0 && (
           <div className="mt-4 space-y-2">
             {errorMessages.map((msg, idx) => (
-              <p key={idx} className="text-sm text-red-600 text-center">{msg}</p>
+              <p key={idx} className="text-sm text-red-600 text-center">
+                {msg}
+              </p>
             ))}
           </div>
         )}
