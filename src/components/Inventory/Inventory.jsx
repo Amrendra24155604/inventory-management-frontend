@@ -90,12 +90,26 @@ export default function Inventory() {
           expiry: expiryEnabled ? expiry : null,
         }),
       });
+// const text = await res.text(); // get raw response
+// console.log(text);             // inspect what came back
+// try {
+//   data = JSON.parse(text);
+// } catch (err) {
+//   console.error("Response was not JSON:", text);
+//   return;
+// }
 
       if (!res.ok) {
         const error = await res.json();
         alert(error.message || "Borrow request failed.");
         return;
       }
+      const data = await res.json();
+if (!data.success) {
+  alert(data.message || "Borrow request failed.");
+  return;
+}
+        
       setSelectedProducts({});
       setPurpose("");
       // reset expiry to 1 month from today
