@@ -2,7 +2,7 @@ import { useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 
 function MemberProfile() {
-   const API_PORT= import.meta.env.VITE_API_PORT;
+  const API_PORT = import.meta.env.VITE_API_PORT;
   const { rollNumber } = useParams();
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -28,11 +28,11 @@ function MemberProfile() {
     };
 
     fetchProfile();
-  }, [rollNumber]);
+  }, [API_PORT, rollNumber]);
 
   if (loading) {
     return (
-      <p className="text-center mt-10 text-gray-500 dark:text-gray-400">
+      <p className="text-center mt-10 text-slate-500 dark:text-slate-400">
         Loading profile...
       </p>
     );
@@ -40,7 +40,7 @@ function MemberProfile() {
 
   if (error) {
     return (
-      <p className="text-center mt-10 text-red-600 dark:text-red-400">
+      <p className="text-center mt-10 text-rose-600 dark:text-rose-400">
         {error}
       </p>
     );
@@ -48,7 +48,7 @@ function MemberProfile() {
 
   if (!user) {
     return (
-      <p className="text-center mt-10 text-gray-500 dark:text-gray-400">
+      <p className="text-center mt-10 text-slate-500 dark:text-slate-400">
         No profile found
       </p>
     );
@@ -57,55 +57,65 @@ function MemberProfile() {
   const avatarUrl =
     user.photoUrl ||
     user.avatarUrl ||
-    `https://ui-avatars.com/api/?name=${user.username?.charAt(0) || "U"}&background=4c51bf&color=fff`;
+    `https://ui-avatars.com/api/?name=${
+      user.username?.charAt(0) || "U"
+    }&background=0ea5e9&color=fff`;
 
   return (
-    <main className="min-h-screen bg-gradient-to-br from-indigo-100 to-purple-200 dark:from-gray-900 dark:to-gray-800 px-6 py-10">
-      <div className="max-w-xl mx-auto bg-white dark:bg-gray-900 rounded-3xl shadow-xl p-8 text-center relative">
-        {/* Admin Badge */}
-        {user.role === "admin" && (
-          <div className="absolute -top-6 left-1/2 transform -translate-x-1/2 px-6 py-2 rounded-full bg-gradient-to-r from-indigo-600 via-purple-700 to-indigo-600 text-white text-sm font-semibold tracking-wide shadow-lg ring-2 ring-purple-400/60 backdrop-blur-md border border-white/10 transition-all duration-300 hover:scale-105 hover:shadow-xl hover:brightness-110">
-            Admin
-          </div>
-        )}
+    <main className="min-h-screen bg-slate-50 dark:bg-slate-950 px-4 py-8 sm:px-6 lg:px-8">
+      <div className="relative max-w-md mx-auto">
+        {/* soft blobs */}
+        <div className="pointer-events-none absolute -top-16 -left-20 h-40 w-40 rounded-full bg-sky-300/30 blur-3xl dark:bg-sky-500/30" />
+        <div className="pointer-events-none absolute -bottom-16 -right-24 h-44 w-44 rounded-full bg-indigo-300/30 blur-3xl dark:bg-indigo-600/30" />
 
-        {/* Avatar circle with click-to-enlarge */}
-        <div
-          className="w-24 h-24 rounded-full mx-auto mb-4 border-4 border-indigo-500 overflow-hidden cursor-pointer transform transition duration-300 hover:scale-105"
-          onClick={() => setIsModalOpen(true)}
-        >
-          <img
-            src={avatarUrl}
-            alt="Avatar"
-            className="w-full h-full object-cover"
-          />
-        </div>
+        <div className="relative bg-white/95 dark:bg-slate-900/95 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-lg px-5 py-7 sm:px-7 sm:py-8 text-center">
+          {/* Admin badge */}
+          {user.role === "admin" && (
+            <div className="absolute -top-4 left-1/2 -translate-x-1/2 px-4 py-1.5 rounded-full bg-gradient-to-r from-indigo-500 via-purple-600 to-indigo-500 text-xs sm:text-sm font-semibold text-white shadow-lg ring-1 ring-purple-400/60 backdrop-blur-md">
+              Admin
+            </div>
+          )}
 
-        {/* Modal overlay with blurred background */}
-        {isModalOpen && (
+          {/* avatar */}
           <div
-            className="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm flex items-center justify-center z-50 transition-opacity duration-300"
-            onClick={() => setIsModalOpen(false)}
+            className="w-24 h-24 sm:w-28 sm:h-28 rounded-full mx-auto mb-4 border-2 border-sky-400 overflow-hidden cursor-pointer transition transform hover:scale-105 shadow-md"
+            onClick={() => setIsModalOpen(true)}
           >
             <img
               src={avatarUrl}
-              alt="Enlarged Avatar"
-              className="w-64 h-64 rounded-full shadow-2xl transform transition duration-300 scale-100 hover:scale-110"
-              onClick={(e) => e.stopPropagation()} // prevent closing when clicking the image itself
+              alt="Avatar"
+              className="w-full h-full object-cover"
             />
           </div>
-        )}
 
-        <h2 className="text-2xl font-bold text-gray-800 dark:text-white mb-2">
-          {user.name}
-        </h2>
-        <p className="text-sm text-gray-600 dark:text-gray-400">{user.email}</p>
-        <p className="text-sm text-gray-600 dark:text-gray-400">
-          Roll No: {user.rollNumber}
-        </p>
-        <p className="text-sm text-indigo-700 dark:text-indigo-400 mt-2 font-medium">
-          {user.domain}
-        </p>
+          {/* modal */}
+          {isModalOpen && (
+            <div
+              className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50"
+              onClick={() => setIsModalOpen(false)}
+            >
+              <img
+                src={avatarUrl}
+                alt="Enlarged Avatar"
+                className="w-56 h-56 sm:w-64 sm:h-64 rounded-full shadow-2xl border-4 border-sky-400 object-cover transition transform hover:scale-105"
+                onClick={(e) => e.stopPropagation()}
+              />
+            </div>
+          )}
+
+          <h2 className="text-lg sm:text-xl font-semibold text-slate-900 dark:text-slate-50 mb-1">
+            {user.name}
+          </h2>
+          <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400">
+            {user.email}
+          </p>
+          <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400 mt-0.5">
+            Roll no: <span className="font-medium">{user.rollNumber}</span>
+          </p>
+          <p className="text-xs sm:text-sm text-sky-700 dark:text-sky-300 mt-2 font-medium">
+            {user.domain}
+          </p>
+        </div>
       </div>
     </main>
   );

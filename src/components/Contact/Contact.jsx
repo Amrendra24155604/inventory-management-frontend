@@ -1,166 +1,134 @@
-import {Meteors} from "../meteors/meteors.jsx";
-
-// function Contact() {
-//   return (
-//     <main className="min-h-screen bg-white dark:bg-gray-900 text-gray-800 dark:text-white relative overflow-hidden">
-//       {/* Meteors Background */}
-//       <div className="absolute inset-0 z-0 pointer-events-none">
-//         <Meteors />
-//       </div>
-
-//       {/* Foreground Content */}
-//       <section className="max-w-4xl mx-auto px-6 py-20 text-center relative z-10">
-//         <h1 className="text-4xl font-bold mb-4">
-//           Get in <span className="text-blue-600 dark:text-blue-400">Touch</span>
-//         </h1>
-//         <p className="text-lg text-gray-600 dark:text-gray-300 mb-8">
-//           Have questions, suggestions, or need support? We're here to help you build smarter.
-//         </p>
-
-//         {/* Contact Form */}
-//         <form className="bg-gray-50 dark:bg-gray-800 p-8 rounded-lg shadow-md text-left">
-//           <div className="mb-6">
-//             <label className="block font-semibold mb-2 text-gray-700 dark:text-gray-200">Name</label>
-//             <input
-//               type="text"
-//               placeholder="Your full name"
-//               className="w-full px-4 py-2 border rounded-lg dark:bg-gray-700 dark:text-white dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
-//             />
-//           </div>
-//           <div className="mb-6">
-//             <label className="block font-semibold mb-2 text-gray-700 dark:text-gray-200">Email</label>
-//             <input
-//               type="email"
-//               placeholder="you@example.com"
-//               className="w-full px-4 py-2 border rounded-lg dark:bg-gray-700 dark:text-white dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
-//             />
-//           </div>
-//           <div className="mb-6">
-//             <label className="block font-semibold mb-2 text-gray-700 dark:text-gray-200">Message</label>
-//             <textarea
-//               rows="5"
-//               placeholder="Tell us what’s on your mind..."
-//               className="w-full px-4 py-2 border rounded-lg dark:bg-gray-700 dark:text-white dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
-//             ></textarea>
-//           </div>
-//           <button
-//             type="submit"
-//             className="px-6 py-3 bg-blue-600 text-white rounded-full font-semibold hover:bg-blue-700 transition"
-//           >
-//             Send Message
-//           </button>
-//         </form>
-
-//         {/* Contact Info */}
-//         <div className="mt-12 text-gray-600 dark:text-gray-400 text-left space-y-2">
-//           <p><strong>Location:</strong> IOT LABS, Bhubaneswar, Odisha</p>
-//           <p><strong>Email:</strong> iot.lab@kiit.ac.in</p>
-//           <p><strong>Phone:</strong> +91 00000 00000</p>
-//         </div>
-//       </section>
-//     </main>
-//   );
-// }
-
-// export default Contact;
+import { motion } from "framer-motion";
 import { useRef } from "react";
 import emailjs from "emailjs-com";
 
 function Contact() {
-  const form = useRef();
+  const formRef = useRef(null);
 
   const sendEmail = (e) => {
     e.preventDefault();
-
     emailjs
       .sendForm(
-        "service_nabix63",   // from EmailJS
-        "template_5ta0i7k",  // from EmailJS
-        form.current,
-        "MYjA4I_zQtRwXLWhQ"    // from EmailJS
+        "service_nabix63",
+        "template_5ta0i7k",
+        formRef.current,
+        "MYjA4I_zQtRwXLWhQ"
       )
       .then(
-        (result) => {
-          alert("Message sent successfully!");
-        },
-        (error) => {
-          alert("Failed to send message. Please try again.");
-        }
+        () => alert("Message sent successfully!"),
+        () => alert("Failed to send message. Please try again.")
       );
   };
 
   return (
-    <main className="min-h-screen bg-white dark:bg-gray-900 text-gray-800 dark:text-white relative overflow-hidden">
-      <div className="absolute inset-0 z-0 pointer-events-none">
-        <Meteors />
-      </div>
+    <div className="w-full">
+      <section className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+        <motion.div
+          className="text-center mb-10"
+          initial={{ opacity: 0, y: 18 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ margin: "-20% 0px -10%", once: false }}
+          transition={{ duration: 0.45 }}
+        >
+          <p className="text-[11px] font-semibold uppercase tracking-[0.24em] text-sky-500">
+            Contact
+          </p>
+          <h2 className="mt-3 text-3xl md:text-4xl font-semibold tracking-tight text-slate-900 dark:text-slate-50">
+            Plug into the{" "}
+            <span className="bg-gradient-to-r from-sky-500 to-indigo-500 bg-clip-text text-transparent">
+              lab network.
+            </span>
+          </h2>
+          <p className="mt-4 text-sm md:text-base text-slate-600 dark:text-slate-300">
+            Questions, new ideas, or want to run this in another society? Drop a
+            message — the coordinators read everything.
+          </p>
+        </motion.div>
 
-      <section className="max-w-4xl mx-auto px-6 py-20 text-center relative z-10">
-        <h1 className="text-4xl font-bold mb-4">
-          Get in <span className="text-blue-600 dark:text-blue-400">Touch</span>
-        </h1>
-        <p className="text-lg text-gray-600 dark:text-gray-300 mb-8">
-          Have questions, suggestions, or need support? We're here to help you build smarter.
-        </p>
+        <motion.div
+          className="relative rounded-3xl border border-slate-200 bg-white/95 p-6 sm:p-8 shadow-lg overflow-hidden dark:border-slate-800 dark:bg-slate-900/90"
+          initial={{ opacity: 0, y: 26 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ margin: "-20% 0px -10%", once: false }}
+          transition={{ duration: 0.5 }}
+        >
+          <div className="pointer-events-none absolute inset-0 rounded-3xl bg-gradient-to-br from-sky-500/10 via-transparent to-indigo-500/10" />
+          <form
+            ref={formRef}
+            onSubmit={sendEmail}
+            className="relative space-y-5 text-sm"
+          >
+            <div className="grid gap-5 sm:grid-cols-2">
+              <div className="space-y-2">
+                <label className="block text-xs font-semibold uppercase tracking-[0.16em] text-slate-700 dark:text-slate-200">
+                  Name
+                </label>
+                <input
+                  type="text"
+                  name="user_name"
+                  required
+                  placeholder="Your full name"
+                  className="w-full rounded-xl border border-slate-300 bg-white px-3 py-2.5 text-sm text-slate-900 outline-none focus:border-sky-400 focus:ring-1 focus:ring-sky-500 dark:border-slate-700 dark:bg-slate-950/60 dark:text-slate-50"
+                />
+              </div>
+              <div className="space-y-2">
+                <label className="block text-xs font-semibold uppercase tracking-[0.16em] text-slate-700 dark:text-slate-200">
+                  Email
+                </label>
+                <input
+                  type="email"
+                  name="user_email"
+                  required
+                  placeholder="you@example.com"
+                  className="w-full rounded-xl border border-slate-300 bg-white px-3 py-2.5 text-sm text-slate-900 outline-none focus:border-sky-400 focus:ring-1 focus:ring-sky-500 dark:border-slate-700 dark:bg-slate-950/60 dark:text-slate-50"
+                />
+              </div>
+            </div>
 
-        {/* Contact Form */}
-       <form
-  ref={form}
-  onSubmit={sendEmail}
-  className="bg-gray-50 dark:bg-gray-800 p-8 rounded-lg shadow-md text-left space-y-6"
->
-  <div>
-    <label className="block font-semibold mb-2 text-gray-700 dark:text-gray-200">
-      Name
-    </label>
-    <input
-      type="text"
-      name="user_name"
-      placeholder="Your full name"
-      required
-      className="w-full px-4 py-2 border rounded-lg dark:bg-gray-700 dark:text-white dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
-    />
-  </div>
-  <div>
-    <label className="block font-semibold mb-2 text-gray-700 dark:text-gray-200">
-      Email
-    </label>
-    <input
-      type="email"
-      name="user_email"
-      placeholder="you@example.com"
-      required
-      className="w-full px-4 py-2 border rounded-lg dark:bg-gray-700 dark:text-white dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
-    />
-  </div>
-  <div>
-    <label className="block font-semibold mb-2 text-gray-700 dark:text-gray-200">
-      Message
-    </label>
-    <textarea
-      name="message"
-      rows="5"
-      placeholder="Tell us what’s on your mind..."
-      required
-      className="w-full px-4 py-2 border rounded-lg dark:bg-gray-700 dark:text-white dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
-    ></textarea>
-  </div>
-  <button
-    type="submit"
-    className="px-6 py-3 bg-blue-600 text-white rounded-full font-semibold hover:bg-blue-700 transition"
-  >
-    Send Message
-  </button>
-</form>
+            <div className="space-y-2">
+              <label className="block text-xs font-semibold uppercase tracking-[0.16em] text-slate-700 dark:text-slate-200">
+                Message
+              </label>
+              <textarea
+                name="message"
+                rows="4"
+                required
+                placeholder="Share what you're building, or how we can help..."
+                className="w-full rounded-xl border border-slate-300 bg-white px-3 py-2.5 text-sm text-slate-900 outline-none focus:border-sky-400 focus:ring-1 focus:ring-sky-500 resize-none dark:border-slate-700 dark:bg-slate-950/60 dark:text-slate-50"
+              />
+            </div>
 
-        {/* Contact Info */}
-        <div className="mt-12 text-gray-600 dark:text-gray-400 text-left space-y-2">
-          <p><strong>Location:</strong> IOT LABS, Bhubaneswar, Odisha</p>
-          <p><strong>Email:</strong> iot.lab@kiit.ac.in</p>
-          <p><strong>Phone:</strong> +91 00000 00000</p>
-        </div>
+            <button
+              type="submit"
+              className="inline-flex items-center justify-center rounded-full bg-sky-500 px-6 py-2.5 text-sm font-semibold text-white shadow-md shadow-sky-500/40 hover:bg-sky-400 transition"
+            >
+              Send message
+            </button>
+          </form>
+
+          <div className="mt-8 grid gap-4 text-xs text-slate-600 sm:grid-cols-3 dark:text-slate-300/80">
+            <p>
+              <span className="font-semibold text-sky-600 dark:text-sky-300">
+                Lab:
+              </span>{" "}
+              IOT LABS, Bhubaneswar
+            </p>
+            <p>
+              <span className="font-semibold text-sky-600 dark:text-sky-300">
+                Email:
+              </span>{" "}
+              iot.lab@kiit.ac.in
+            </p>
+            <p>
+              <span className="font-semibold text-sky-600 dark:text-sky-300">
+                Phone:
+              </span>{" "}
+              +91 00000 00000
+            </p>
+          </div>
+        </motion.div>
       </section>
-    </main>
+    </div>
   );
 }
 

@@ -1,59 +1,113 @@
-import { Link } from "react-router-dom"; // Make sure this is at the top of your file
+import { motion } from "framer-motion";
+
+const blocks = [
+  {
+    label: "Mission",
+    title: "Turn clutter into clarity.",
+    body: "InventoryPro turns cardboard‑box chaos into a searchable, accountable system designed for student labs.",
+  },
+  {
+    label: "Why now",
+    title: "Hardware deserves real UX.",
+    body: "Borrowing a sensor should feel as smooth as opening a doc. No more lost kits, mystery boxes, or endless spreadsheets.",
+  },
+  {
+    label: "Built at IOT LABS",
+    title: "By builders, for builders.",
+    body: "Designed with real clubs, tech teams, and fest crews – tuned for how students actually prototype and ship.",
+  },
+];
 
 function About() {
   return (
-    <main className="min-h-screen bg-white dark:bg-gray-900 text-gray-800 dark:text-white">
-      {/* Intro Section */}
-      <section className="max-w-7xl mx-auto px-6 py-20 text-center">
-        <h1 className="text-4xl font-bold mb-4">
-          About <span className="text-blue-600 dark:text-blue-400">InventoryPro</span>
-        </h1>
-        <p className="text-lg text-gray-600 dark:text-gray-300 mb-8">
-          InventoryPro is a student-driven platform designed to simplify how college societies manage shared resources — enabling members to borrow, return, and track components with ease.
-        </p>
+    <div className="w-full">
+      <section className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="text-center max-w-3xl mx-auto mb-10 sm:mb-12">
+          <motion.p
+            className="text-[11px] font-semibold uppercase tracking-[0.24em] text-sky-500"
+            initial={{ opacity: 0, y: 10 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ margin: "-20% 0px -10%", once: false }}
+            transition={{ duration: 0.4 }}
+          >
+            About the system
+          </motion.p>
 
-        {/* Highlights */}
-        <div className="grid md:grid-cols-3 gap-10 text-left mt-12">
-          {[
-            {
-              title: "Our Mission",
-              desc: "To support student innovation by making technical components accessible, organized, and easy to manage — so ideas can turn into impact without logistical hurdles.",
-            },
-            {
-              title: "Why It Matters",
-              desc: "Society tools and components often go underutilized or get misplaced. InventoryPro ensures every item is accounted for, empowering teams to build confidently and collaboratively.",
-            },
-            {
-              title: "Built by Students",
-              desc: "Created at IOT LABS, this system reflects the needs of real student builders — with intuitive design, role-based access, and a focus on hands-on learning.",
-            },
-          ].map((item, idx) => (
-            <div key={idx} className="p-6 bg-gray-50 dark:bg-gray-800 rounded-lg shadow hover:shadow-md transition">
-              <h3 className="text-xl font-semibold text-blue-600 dark:text-blue-400 mb-2">{item.title}</h3>
-              <p className="text-gray-700 dark:text-gray-300">{item.desc}</p>
-            </div>
+          <motion.h2
+            className="mt-3 text-2xl sm:text-3xl md:text-4xl font-semibold tracking-tight text-slate-900 dark:text-slate-50"
+            initial={{ opacity: 0, y: 14 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ margin: "-20% 0px -10%", once: false }}
+            transition={{ duration: 0.45 }}
+          >
+            The operating layer{" "}
+            <span className="bg-gradient-to-r from-sky-500 to-indigo-500 bg-clip-text text-transparent">
+              for your lab.
+            </span>
+          </motion.h2>
+
+          <motion.p
+            className="mt-4 text-sm md:text-base text-slate-600 dark:text-slate-300 leading-relaxed"
+            initial={{ opacity: 0, y: 14 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ margin: "-20% 0px -10%", once: false }}
+            transition={{ duration: 0.45, delay: 0.08 }}
+          >
+            From first‑year breadboard experiments to final‑year capstones,
+            InventoryPro keeps gear discoverable, reliable, and shared across
+            teams.
+          </motion.p>
+        </div>
+
+        {/* Cards */}
+        <div className="grid gap-4 sm:gap-6 md:grid-cols-3">
+          {blocks.map((b, idx) => (
+            <motion.div
+              key={b.title}
+              className="relative rounded-2xl border border-slate-200 bg-white/95 px-5 py-6 shadow-sm hover:shadow-lg transition-all dark:border-slate-800 dark:bg-slate-900/90"
+              initial={{ opacity: 0, y: 26 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ margin: "-20% 0px -10%", once: false }}
+              transition={{ duration: 0.45, delay: 0.08 * idx }}
+            >
+              <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-sky-400/60 to-transparent opacity-70" />
+              <p className="text-[11px] uppercase tracking-[0.2em] text-sky-500 mb-2">
+                {b.label}
+              </p>
+              <h3 className="text-base font-semibold text-slate-900 mb-2 dark:text-slate-50">
+                {b.title}
+              </h3>
+              <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
+                {b.body}
+              </p>
+            </motion.div>
           ))}
         </div>
-      </section>
 
-      {/* Call to Action */}
-      <section className="bg-blue-50 dark:bg-gray-800 py-16">
-        <div className="max-w-6xl mx-auto px-6 text-center">
-          <h2 className="text-3xl font-bold mb-6">Be Part of the Build Culture</h2>
-          <p className="text-lg text-gray-700 dark:text-gray-300 mb-8">
-            Whether you're prototyping a robot, organizing a tech fest, or just borrowing a multimeter — InventoryPro helps your society stay organized, efficient, and ready to build.
-          </p>
-         
-<Link
-  to="/inventory"
-  className="inline-block px-6 py-3 bg-blue-600 text-white rounded-full font-semibold hover:bg-blue-700 transition"
->
-  Explore Features
-</Link>
-
-        </div>
+        {/* Chips */}
+        <motion.div
+          className="mt-8 sm:mt-10 flex flex-wrap justify-center gap-3 text-[11px]"
+          initial={{ opacity: 0, y: 18 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ margin: "-20% 0px -10%", once: false }}
+          transition={{ duration: 0.45 }}
+        >
+          {[
+            "Borrow logs",
+            "Role based access",
+            "Exportable reports",
+            "Event planning view",
+          ].map((tag) => (
+            <span
+              key={tag}
+              className="rounded-full border border-sky-500/40 bg-sky-50 px-3 py-1 text-sky-700 dark:bg-slate-900 dark:border-sky-500/40 dark:text-sky-200"
+            >
+              {tag}
+            </span>
+          ))}
+        </motion.div>
       </section>
-    </main>
+    </div>
   );
 }
 

@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 
 function CompleteProfile() {
-  const API_PORT= import.meta.env.VITE_API_PORT;
+  const API_PORT = import.meta.env.VITE_API_PORT;
 
   const [name, setFullName] = useState("");
   const [rollNumber, setRollNumber] = useState("");
@@ -24,22 +24,22 @@ function CompleteProfile() {
     "Content Writing",
     "Graphic Design / UIUX",
     "Marketing & Management",
-    "Video Editing / Photography"
+    "Video Editing / Photography",
   ];
 
   useEffect(() => {
     const fetchProfile = async () => {
-
       try {
         const response = await fetch(`${API_PORT}/api/v1/auth/current-user`, {
           method: "POST",
           credentials: "include",
         });
-
         const data = await response.json();
         if (response.ok && data.data) {
           setProfileData(data.data);
-          setIsEditing(!data.data.rollNumber || !data.data.domain || !data.data.name);
+          setIsEditing(
+            !data.data.rollNumber || !data.data.domain || !data.data.name
+          );
         }
       } catch (err) {
         console.error("Failed to fetch profile:", err);
@@ -47,15 +47,15 @@ function CompleteProfile() {
     };
 
     fetchProfile();
-  }, []);
+  }, [API_PORT]);
 
   const handleSubmit = async () => {
     setErrorMessages([]);
     setLoading(true);
 
     try {
-      // First upload photo if selected
       let photoUrl = profileData?.photoUrl || null;
+
       if (photo) {
         const formData = new FormData();
         formData.append("photos", photo);
@@ -70,18 +70,21 @@ function CompleteProfile() {
         }
       }
 
-      // Then submit profile info
-      const response = await fetch(`${API_PORT}/api/v1/auth/complete-profile`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        credentials: "include",
-        body: JSON.stringify({ name, rollNumber, domain, photoUrl }),
-      });
+      const response = await fetch(
+        `${API_PORT}/api/v1/auth/complete-profile`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          credentials: "include",
+          body: JSON.stringify({ name, rollNumber, domain, photoUrl }),
+        }
+      );
 
       const data = await response.json();
       if (response.ok && data.data) {
         setProfileData(data.data);
         setIsEditing(false);
+        setPreview(null);
       } else {
         const messages = Array.isArray(data.errors)
           ? data.errors
@@ -106,78 +109,113 @@ function CompleteProfile() {
   const avatarLetter = profileData?.username?.charAt(0)?.toUpperCase() || "U";
   const avatarUrl = profileData?.photoUrl
     ? profileData.photoUrl
-    : `https://ui-avatars.com/api/?name=${avatarLetter}&background=4c51bf&color=fff&size=128&bold=true`;
+    : `https://ui-avatars.com/api/?name=${avatarLetter}&background=0ea5e9&color=fff&size=128&bold=true`;
 
   return (
-    <main className="min-h-screen w-full bg-gradient-to-br from-indigo-100 to-purple-200 dark:from-gray-900 dark:to-gray-800 flex items-center justify-center px-6 py-10">
-      <div className="relative w-full max-w-4xl">
-        <div className="bg-white dark:bg-gray-900 rounded-3xl shadow-2xl p-10 transition-all duration-300">
+    <main className="min-h-screen w-full bg-slate-50 dark:bg-slate-950 flex items-center justify-center px-4 py-8 sm:px-6 lg:px-8">
+      <div className="relative w-full max-w-3xl">
+        {/* soft blobs */}
+        <div className="pointer-events-none absolute -top-16 -left-20 h-40 w-40 rounded-full bg-sky-300/30 blur-3xl dark:bg-sky-500/30" />
+        <div className="pointer-events-none absolute -bottom-16 -right-24 h-44 w-44 rounded-full bg-indigo-300/30 blur-3xl dark:bg-indigo-600/30" />
+
+        <div className="relative bg-white/95 dark:bg-slate-900/95 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-lg px-4 py-6 sm:px-6 sm:py-8">
           {isEditing ? (
             <>
-              {/* Editing form */}
-              <h2 className="text-4xl font-bold text-center text-indigo-600 dark:text-white mb-8">
-                Complete Your Profile
+              <h2 className="text-xl sm:text-2xl md:text-3xl font-semibold text-center text-slate-900 dark:text-slate-50 mb-6">
+                Complete your{" "}
+                <span className="bg-gradient-to-r from-sky-500 to-indigo-500 bg-clip-text text-transparent">
+                  profile
+                </span>
               </h2>
-              <div className="space-y-6">
-                <input
-                  type="text"
-                  placeholder="Full Name"
-                  value={name}
-                  onChange={(e) => setFullName(e.target.value)}
-                  className="w-full px-4 py-3 border rounded-lg dark:bg-gray-800 dark:text-white dark:border-gray-700"
-                />
 
-                <input
-                  type="text"
-                  placeholder="Roll Number"
-                  value={rollNumber}
-                  onChange={(e) => setRollNumber(e.target.value)}
-                  className="w-full px-4 py-3 border rounded-lg dark:bg-gray-800 dark:text-white dark:border-gray-700"
-                />
-
-                <select
-                  value={domain}
-                  onChange={(e) => setDomain(e.target.value)}
-                  className="w-full px-4 py-3 border rounded-lg dark:bg-gray-800 dark:text-white dark:border-gray-700"
-                >
-                  <option value="">Select your domain</option>
-                  {domainOptions.map((option) => (
-                    <option key={option} value={option}>
-                      {option}
-                    </option>
-                  ))}
-                </select>
-
-                {/* Photo upload */}
-                <input
-                  type="file"
-                  accept="image/*"
-                  onChange={(e) => {
-                    setPhoto(e.target.files[0]);
-                    setPreview(URL.createObjectURL(e.target.files[0]));
-                  }}
-                  className="w-full px-4 py-3 border rounded-lg dark:bg-gray-800 dark:text-white dark:border-gray-700"
-                />
-                {preview && (
-                  <img
-                    src={preview}
-                    alt="Preview"
-                    className="w-32 h-32 rounded-full object-cover mx-auto mt-4"
+              <div className="space-y-4 sm:space-y-5">
+                <div>
+                  <label className="block text-xs sm:text-sm font-medium text-slate-700 dark:text-slate-200 mb-1">
+                    Full name
+                  </label>
+                  <input
+                    type="text"
+                    placeholder="Your full name"
+                    value={name}
+                    onChange={(e) => setFullName(e.target.value)}
+                    className="w-full px-3 py-2 rounded-lg border border-slate-300 bg-white text-sm text-slate-900 focus:ring-2 focus:ring-sky-500 outline-none dark:border-slate-700 dark:bg-slate-900 dark:text-slate-50"
                   />
-                )}
+                </div>
+
+                <div>
+                  <label className="block text-xs sm:text-sm font-medium text-slate-700 dark:text-slate-200 mb-1">
+                    Roll number
+                  </label>
+                  <input
+                    type="text"
+                    placeholder="e.g., 2205xxxxx"
+                    value={rollNumber}
+                    onChange={(e) => setRollNumber(e.target.value)}
+                    className="w-full px-3 py-2 rounded-lg border border-slate-300 bg-white text-sm text-slate-900 focus:ring-2 focus:ring-sky-500 outline-none dark:border-slate-700 dark:bg-slate-900 dark:text-slate-50"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs sm:text-sm font-medium text-slate-700 dark:text-slate-200 mb-1">
+                    Domain
+                  </label>
+                  <select
+                    value={domain}
+                    onChange={(e) => setDomain(e.target.value)}
+                    className="w-full px-3 py-2 rounded-lg border border-slate-300 bg-white text-sm text-slate-900 focus:ring-2 focus:ring-sky-500 outline-none dark:border-slate-700 dark:bg-slate-900 dark:text-slate-50"
+                  >
+                    <option value="">Select your domain</option>
+                    {domainOptions.map((option) => (
+                      <option key={option} value={option}>
+                        {option}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block text-xs sm:text-sm font-medium text-slate-700 dark:text-slate-200 mb-1">
+                    Profile photo
+                  </label>
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={(e) => {
+                      const file = e.target.files?.[0];
+                      if (!file) return;
+                      setPhoto(file);
+                      setPreview(URL.createObjectURL(file));
+                    }}
+                    className="w-full text-xs sm:text-sm file:mr-3 file:rounded-lg file:border-0 file:bg-sky-500 file:px-3 file:py-1.5 file:text-xs file:font-semibold file:text-white hover:file:bg-sky-400 cursor-pointer text-slate-600 dark:text-slate-300"
+                  />
+                  {(preview || avatarUrl) && (
+                    <div className="mt-4 flex justify-center">
+                      <img
+                        src={preview || avatarUrl}
+                        alt="Preview"
+                        className="w-20 h-20 sm:w-24 sm:h-24 rounded-full object-cover border-2 border-sky-400 shadow-sm"
+                      />
+                    </div>
+                  )}
+                </div>
 
                 <button
                   onClick={handleSubmit}
                   disabled={loading}
-                  className="w-full py-3 bg-indigo-600 text-white rounded-lg font-semibold hover:bg-indigo-700 transition disabled:opacity-50"
+                  className="w-full mt-2 inline-flex items-center justify-center rounded-full bg-sky-500 px-4 py-2.5 text-sm font-semibold text-white shadow-md hover:bg-sky-400 disabled:opacity-60 disabled:cursor-not-allowed transition"
                 >
-                  {loading ? "Saving..." : "Submit"}
+                  {loading ? "Saving..." : "Save profile"}
                 </button>
 
                 {errorMessages.length > 0 && (
-                  <div className="mt-4 space-y-2">
+                  <div className="mt-3 space-y-1">
                     {errorMessages.map((msg, idx) => (
-                      <p key={idx} className="text-sm text-red-600 text-center">{msg}</p>
+                      <p
+                        key={idx}
+                        className="text-xs sm:text-sm text-rose-600 text-center"
+                      >
+                        {msg}
+                      </p>
                     ))}
                   </div>
                 )}
@@ -185,44 +223,51 @@ function CompleteProfile() {
             </>
           ) : (
             <>
-              {/* Admin Badge */}
-        {profileData.role === "admin" && (
-          <div className="absolute -top-6 left-1/2 transform -translate-x-1/2 px-6 py-2 rounded-full bg-gradient-to-r from-indigo-600 via-purple-700 to-indigo-600 text-white text-sm font-semibold tracking-wide shadow-lg ring-2 ring-purple-400/60 backdrop-blur-md border border-white/10 transition-all duration-300 hover:scale-105 hover:shadow-xl hover:brightness-110">
-            Admin
-          </div>
-        )}
-              <h2 className="text-4xl font-bold text-center text-indigo-600 dark:text-white mb-10">
-                Your Profile
+              {profileData?.role === "admin" && (
+                <div className="absolute -top-4 left-1/2 -translate-x-1/2 px-4 py-1.5 rounded-full bg-gradient-to-r from-indigo-500 via-purple-600 to-indigo-500 text-xs sm:text-sm font-semibold text-white shadow-lg ring-1 ring-purple-400/60 backdrop-blur-md">
+                  Admin
+                </div>
+              )}
+
+              <h2 className="text-xl sm:text-2xl md:text-3xl font-semibold text-center text-slate-900 dark:text-slate-50 mb-7 mt-2">
+                Your{" "}
+                <span className="bg-gradient-to-r from-sky-500 to-indigo-500 bg-clip-text text-transparent">
+                  profile
+                </span>
               </h2>
 
-              <div className="flex flex-col items-center space-y-6">
-                <div className="w-32 h-32 rounded-full overflow-hidden border-4 border-indigo-500 shadow-lg transform hover:scale-105 transition duration-300">
+              <div className="flex flex-col items-center space-y-5">
+                <div className="w-24 h-24 sm:w-28 sm:h-28 rounded-full overflow-hidden border-2 border-sky-400 shadow-md hover:scale-105 transition">
                   <img
                     src={avatarUrl}
-                    alt="User Avatar"
+                    alt="User avatar"
                     className="w-full h-full object-cover"
                   />
                 </div>
 
-                <div className="text-center space-y-2">
-                  <h3 className="text-2xl font-semibold text-gray-800 dark:text-white">
-                    {profileData?.name || "Unknown User"}
+                <div className="text-center space-y-1">
+                  <h3 className="text-lg sm:text-xl font-semibold text-slate-900 dark:text-slate-50">
+                    {profileData?.name || "Unknown user"}
                   </h3>
-                  <p className="text-base text-gray-600 dark:text-gray-400">
+                  <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400">
                     {profileData?.email || "No email available"}
                   </p>
                 </div>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 w-full mt-6">
-                  <div className="bg-indigo-50 dark:bg-gray-800 p-6 rounded-xl shadow">
-                    <h4 className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-1">Roll Number</h4>
-                    <p className="text-lg font-semibold text-gray-800 dark:text-white">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 w-full mt-4">
+                  <div className="bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 p-4 rounded-xl shadow-sm">
+                    <h4 className="text-[11px] sm:text-xs font-medium text-slate-500 dark:text-slate-400 mb-1">
+                      Roll number
+                    </h4>
+                    <p className="text-sm sm:text-base font-semibold text-slate-900 dark:text-slate-50">
                       {profileData?.rollNumber || "Not set"}
                     </p>
                   </div>
-                  <div className="bg-indigo-50 dark:bg-gray-800 p-6 rounded-xl shadow">
-                    <h4 className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-1">Domain</h4>
-                    <p className="text-lg font-semibold text-gray-800 dark:text-white">
+                  <div className="bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 p-4 rounded-xl shadow-sm">
+                    <h4 className="text-[11px] sm:text-xs font-medium text-slate-500 dark:text-slate-400 mb-1">
+                      Domain
+                    </h4>
+                    <p className="text-sm sm:text-base font-semibold text-slate-900 dark:text-slate-50">
                       {profileData?.domain || "Not set"}
                     </p>
                   </div>
@@ -230,9 +275,9 @@ function CompleteProfile() {
 
                 <button
                   onClick={handleEdit}
-                  className="mt-8 px-6 py-3 bg-indigo-600 text-white rounded-full font-semibold hover:bg-indigo-700 transition"
+                  className="mt-5 inline-flex items-center justify-center rounded-full bg-sky-500 px-5 py-2.5 text-sm font-semibold text-white shadow-md hover:bg-sky-400 transition"
                 >
-                  Edit Profile
+                  Edit profile
                 </button>
               </div>
             </>

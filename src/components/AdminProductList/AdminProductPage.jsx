@@ -3,20 +3,21 @@ import { FaEdit, FaTrashAlt } from "react-icons/fa";
 import { AnimatePresence, motion } from "framer-motion";
 
 export default function AdminProductPage({ menuOpen = false }) {
-   const API_PORT= import.meta.env.VITE_API_PORT;
+  const API_PORT = import.meta.env.VITE_API_PORT;
   const [products, setProducts] = useState([]);
-const [form, setForm] = useState({
-  name: "",
-  variant: "",
-  quantityAvailable: 0,
-  photoUrl: ""   
-});
-const [photoFile, setPhotoFile] = useState(null); // track selected file
+  const [form, setForm] = useState({
+    name: "",
+    variant: "",
+    initialQuantity: 0,
+    photoUrl: "",
+  });
+  const [photoFile, setPhotoFile] = useState(null);
   const [editingId, setEditingId] = useState(null);
   const [error, setError] = useState("");
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [deleteTargetId, setDeleteTargetId] = useState(null);
-  
+  const [enlargedImage, setEnlargedImage] = useState(null);
+
   const token = localStorage.getItem("token");
 
   const fetchProducts = async () => {
@@ -37,79 +38,78 @@ const [photoFile, setPhotoFile] = useState(null); // track selected file
   useEffect(() => {
     fetchProducts();
   }, []);
-// extra state to track selected file
 
-const handleSubmit = async (e) => {
-  e.preventDefault();
-  setError("");
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setError("");
 
-  if (form.quantityAvailable < 0) {
-    setError("Quantity cannot be negative.");
-    return;
-  }
-
-  let photoUrl = form.photoUrl; // keep existing if editing
-
-  //  Upload photo if a new file was selected
-  if (photoFile) {
-    const uploadData = new FormData();
-    uploadData.append("photos", photoFile);
-
-    try {
-      const uploadRes = await fetch(`${API_PORT}/api/v1/upload`, {
-        method: "POST",
-        body: uploadData,
-      });
-      const uploadJson = await uploadRes.json();
-
-      if (uploadRes.ok && uploadJson.photos?.length > 0) {
-        photoUrl = uploadJson.photos[0]; // Cloudinary URL
-      }
-    } catch (err) {
-      console.error("Upload failed:", err);
-      setError("Image upload failed");
+    if (form.initialQuantity < 0) {
+      setError("Quantity cannot be negative.");
       return;
     }
-  }
 
-  const url = editingId
-    ? `${API_PORT}/api/v1/auth/products/${editingId}`
-    : `${API_PORT}/api/v1/auth/createProduct`;
+    let photoUrl = form.photoUrl;
 
-  const method = editingId ? "PUT" : "POST";
+    if (photoFile) {
+      const uploadData = new FormData();
+      uploadData.append("photos", photoFile);
 
-  try {
-    const res = await fetch(url, {
-      method,
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-      credentials: "include",
-      body: JSON.stringify({ ...form, photoUrl }), 
+      try {
+        const uploadRes = await fetch(`${API_PORT}/api/v1/upload`, {
+          method: "POST",
+          body: uploadData,
+        });
+        const uploadJson = await uploadRes.json();
+
+        if (uploadRes.ok && uploadJson.photos?.length > 0) {
+          photoUrl = uploadJson.photos[0];
+        }
+      } catch (err) {
+        console.error("Upload failed:", err);
+        setError("Image upload failed");
+        return;
+      }
+    }
+
+    const url = editingId
+      ? `${API_PORT}/api/v1/auth/products/${editingId}`
+      : `${API_PORT}/api/v1/auth/createProduct`;
+
+    const method = editingId ? "PUT" : "POST";
+
+    try {
+      const res = await fetch(url, {
+        method,
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        credentials: "include",
+        body: JSON.stringify({ ...form, photoUrl }),
+      });
+
+      if (!res.ok) throw new Error("Failed to submit product");
+
+      setForm({ name: "", variant: "", initialQuantity: 0, photoUrl: "" });
+      setPhotoFile(null);
+      setEditingId(null);
+      fetchProducts();
+    } catch (err) {
+      console.error(err);
+      setError("Submission failed. Please check your input and access.");
+    }
+  };
+
+  const handleEdit = (product) => {
+    setForm({
+      name: product.name,
+      variant: product.variant,
+      initialQuantity: product.initialQuantity,
+      photoUrl: product.photoUrl || "",
     });
+    setEditingId(product._id);
+  };
 
-    if (!res.ok) throw new Error("Failed to submit product");
-
-    setForm({ name: "", variant: "", quantityAvailable: 0, photoUrl: "" });
-    setPhotoFile(null);
-    setEditingId(null);
-    fetchProducts();
-  } catch (err) {
-    console.error(err);
-    setError("Submission failed. Please check your input and access.");
-  }
-};
-
-const handleEdit = (product) => {
-  setForm({
-    name: product.name,
-    variant: product.variant,
-    initialQuantity: product.initialQuantity,
-    photoUrl: product.photoUrl || "", // 👈 prefill photoUrl if exists
-  });
-  setEditingId(product._id);
-};
   const confirmDelete = (productId) => {
     setDeleteTargetId(productId);
     setShowDeleteConfirm(true);
@@ -117,11 +117,14 @@ const handleEdit = (product) => {
 
   const handleDeleteConfirmed = async () => {
     try {
-      const res = await fetch(`${API_PORT}api/v1/auth/products/${deleteTargetId}`, {
-        method: "DELETE",
-        headers: { Authorization: `Bearer ${token}` },
-        credentials: "include",
-      });
+      const res = await fetch(
+        `${API_PORT}/api/v1/auth/products/${deleteTargetId}`,
+        {
+          method: "DELETE",
+          headers: { Authorization: `Bearer ${token}` },
+          credentials: "include",
+        }
+      );
 
       if (!res.ok) throw new Error("Failed to delete product");
 
@@ -135,319 +138,329 @@ const handleEdit = (product) => {
   };
 
   const cancelEdit = () => {
-  setForm({ name: "", variant: "", quantityAvailable: 0, photoUrl: "" });
-  setPhotoFile(null);
-  setEditingId(null);
-};
-const [enlargedImage, setEnlargedImage] = useState();
-return (
-  <main className="min-h-screen bg-gradient-to-br from-indigo-50 via-purple-100 to-pink-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 text-black dark:text-white relative overflow-hidden">
-    <div className={`transition duration-300 ${menuOpen ? "blur-sm scale-[0.98]" : "blur-0 scale-100"}`}>
-      <section className="max-w-7xl mx-auto px-6 py-20 relative z-10">
-        <h1 className="text-4xl font-extrabold mb-10 text-center text-indigo-600 dark:text-indigo-400 tracking-tight border-b pb-2 border-indigo-200 dark:border-indigo-700">
-          🛠 Admin Product Management
-        </h1>
+    setForm({ name: "", variant: "", initialQuantity: 0, photoUrl: "" });
+    setPhotoFile(null);
+    setEditingId(null);
+  };
 
-        <AnimatePresence>
-          {error && (
-            <motion.div
-              initial={{ opacity: 0, y: -10 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -10 }}
-              className="mb-6 text-red-600 dark:text-red-400 text-sm text-center font-medium"
-            >
-              {error}
-            </motion.div>
-          )}
-        </AnimatePresence>
+  return (
+    <main className="min-h-screen bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-50 relative overflow-hidden">
+      {/* soft blobs */}
+      <div className="pointer-events-none absolute -top-16 -left-24 h-44 w-44 rounded-full bg-sky-300/30 blur-3xl dark:bg-sky-500/30" />
+      <div className="pointer-events-none absolute -bottom-20 -right-28 h-48 w-48 rounded-full bg-indigo-300/30 blur-3xl dark:bg-indigo-600/30" />
 
-        {/* Product List */}
-        <div className="mb-12">
-          <h2 className="text-xl font-semibold mb-6 text-center text-indigo-700 dark:text-indigo-400">
-            📦 All Products
-          </h2>
-          <div className="grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-8">
-            {products.map((product) => (
+      <div
+        className={`relative z-10 transition duration-300 ${
+          menuOpen ? "blur-sm scale-[0.98]" : "blur-0 scale-100"
+        }`}
+      >
+        <section className="max-w-6xl mx-auto px-4 py-8 sm:px-6 lg:px-8">
+          {/* page title */}
+          <h1 className="relative text-2xl sm:text-3xl md:text-4xl font-semibold text-center text-slate-900 dark:text-slate-50 mb-8">
+            🛠 Admin{" "}
+            <span className="bg-gradient-to-r from-sky-500 to-indigo-500 bg-clip-text text-transparent">
+              product management
+            </span>
+          </h1>
+
+          <AnimatePresence>
+            {error && (
               <motion.div
-                key={product._id}
-                initial={{ opacity: 0, scale: 0.95 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 0.3 }}
-                whileHover={{ scale: 1.03 }}
-                className={`flex justify-between items-center p-6 rounded-2xl shadow-lg border transition ${
-                  editingId === product._id
-                    ? "border-indigo-500 bg-indigo-50 dark:bg-indigo-900"
-                    : "border-gray-200 bg-white dark:bg-gray-800"
-                }`}
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -10 }}
+                className="mb-4 text-rose-600 dark:text-rose-400 text-sm text-center font-medium"
               >
-                {/* Text on the left */}
-                <div className="flex flex-col items-start gap-2 text-left">
-                  <h3 className="text-lg font-bold text-gray-800 dark:text-white">
-                    {product.name}
-                  </h3>
-                  <p className="text-sm text-gray-600 dark:text-gray-300">
-                    Variant:{" "}
-                    <span className="font-medium">
-                      {product.variant}
-                    </span>
-                  </p>
-                  <p className="text-sm text-gray-600 dark:text-gray-300">
-                    Quantity:{" "}
-                    <span className="font-medium">
-                      {product.initialQuantity}
-                    </span>
-                  </p>
+                {error}
+              </motion.div>
+            )}
+          </AnimatePresence>
+
+          {/* product list */}
+          <div className="mb-10">
+            <h2 className="relative text-xl sm:text-2xl font-semibold mb-6 text-center text-slate-900 dark:text-slate-50">
+              📦{" "}
+              <span className="bg-gradient-to-r from-sky-500 to-indigo-500 bg-clip-text text-transparent">
+                all products
+              </span>
+            </h2>
+
+            <div className="grid sm:grid-cols-1 md:grid-cols-2 gap-5 sm:gap-6">
+              {products.map((product) => (
+                <motion.div
+                  key={product._id}
+                  initial={{ opacity: 0, scale: 0.97 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ duration: 0.2 }}
+                  whileHover={{ scale: 1.02 }}
+                  className={`flex justify-between items-center p-4 sm:p-5 rounded-2xl shadow-sm border transition-colors ${
+                    editingId === product._id
+                      ? "border-sky-500 bg-sky-50 dark:bg-sky-900/30"
+                      : "border-slate-200 bg-white/95 dark:border-slate-700 dark:bg-slate-900/95"
+                  }`}
+                >
+                  {/* left: text */}
+                  <div className="flex flex-col items-start gap-1.5 text-left">
+                    <h3 className="text-base sm:text-lg font-semibold text-slate-900 dark:text-slate-50">
+                      {product.name}
+                    </h3>
+                    <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300">
+                      Variant:{" "}
+                      <span className="font-medium">{product.variant}</span>
+                    </p>
+                    <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300">
+                      Quantity:{" "}
+                      <span className="font-medium">
+                        {product.initialQuantity}
+                      </span>
+                    </p>
+                  </div>
+
+                  {/* right: image + actions */}
+                  <div className="flex flex-col items-end gap-3">
+                    <button
+                      type="button"
+                      onClick={() =>
+                        setEnlargedImage(
+                          product.photoUrl ||
+                            `https://ui-avatars.com/api/?name=${product.name?.charAt(
+                              0
+                            )}&background=0ea5e9&color=fff&size=512`
+                        )
+                      }
+                      className="relative w-20 h-20 sm:w-24 sm:h-24 rounded-full overflow-hidden border-2 border-sky-400 shadow-sm transform transition hover:scale-105 hover:shadow-md focus:outline-none focus:ring-2 focus:ring-sky-400"
+                    >
+                      <img
+                        src={
+                          product.photoUrl ||
+                          `https://ui-avatars.com/api/?name=${product.name?.charAt(
+                            0
+                          )}&background=0ea5e9&color=fff&size=128`
+                        }
+                        alt={product.name}
+                        className="w-full h-full object-cover object-center"
+                      />
+                    </button>
+
+                    <div className="flex w-full justify-end items-center gap-2">
+                      <button
+                        onClick={() => handleEdit(product)}
+                        className="inline-flex items-center justify-center rounded-full border border-sky-200 dark:border-sky-500/60 bg-sky-50/70 dark:bg-sky-900/40 px-3 py-1.5 text-xs sm:text-sm text-sky-700 dark:text-sky-300 hover:bg-sky-100 dark:hover:bg-sky-800 transition shadow-sm hover:shadow-md"
+                        title="Edit product"
+                      >
+                        <FaEdit className="mr-1" />
+                        <span className="hidden sm:inline">Edit</span>
+                      </button>
+                      <button
+                        onClick={() => confirmDelete(product._id)}
+                        className="inline-flex items-center justify-center rounded-full border border-rose-200 dark:border-rose-500/60 bg-rose-50/80 dark:bg-rose-900/40 px-3 py-1.5 text-xs sm:text-sm text-rose-700 dark:text-rose-300 hover:bg-rose-100 dark:hover:bg-rose-800 transition shadow-sm hover:shadow-md"
+                        title="Delete product"
+                      >
+                        <FaTrashAlt className="mr-1" />
+                        <span className="hidden sm:inline">Delete</span>
+                      </button>
+                    </div>
+                  </div>
+                </motion.div>
+              ))}
+            </div>
+          </div>
+
+          {/* form section */}
+          <div className="max-w-4xl mx-auto mb-6">
+            <h2 className="relative text-xl sm:text-2xl font-semibold mb-6 text-center text-slate-900 dark:text-slate-50">
+              {editingId ? "✏️" : "➕"}{" "}
+              <span className="bg-gradient-to-r from-sky-500 to-indigo-500 bg-clip-text text-transparent">
+                {editingId ? "edit product" : "create new product"}
+              </span>
+            </h2>
+
+            <form
+              onSubmit={handleSubmit}
+              className="bg-white/95 dark:bg-slate-900/95 p-5 sm:p-6 rounded-2xl shadow-sm space-y-5 border border-slate-200 dark:border-slate-700"
+            >
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                <div className="flex flex-col gap-4">
+                  <input
+                    type="text"
+                    placeholder="Product name"
+                    value={form.name}
+                    onChange={(e) =>
+                      setForm((prev) => ({ ...prev, name: e.target.value }))
+                    }
+                    className="p-2.5 border border-slate-300 rounded-lg bg-white dark:bg-slate-900 text-sm text-slate-900 dark:text-slate-50 focus:ring-2 focus:ring-sky-500 outline-none"
+                    required
+                  />
+                  <input
+                    type="text"
+                    placeholder="Variant"
+                    value={form.variant}
+                    onChange={(e) =>
+                      setForm((prev) => ({ ...prev, variant: e.target.value }))
+                    }
+                    className="p-2.5 border border-slate-300 rounded-lg bg-white dark:bg-slate-900 text-sm text-slate-900 dark:text-slate-50 focus:ring-2 focus:ring-sky-500 outline-none"
+                    required
+                  />
+                  <input
+                    type="number"
+                    placeholder="Initial quantity"
+                    min="0"
+                    value={form.initialQuantity}
+                    onChange={(e) =>
+                      setForm((prev) => ({
+                        ...prev,
+                        initialQuantity: Math.max(0, Number(e.target.value)),
+                      }))
+                    }
+                    className="p-2.5 border border-slate-300 rounded-lg bg-white dark:bg-slate-900 text-sm text-slate-900 dark:text-slate-50 focus:ring-2 focus:ring-sky-500 outline-none"
+                    required
+                  />
                 </div>
 
-                {/* Image and actions on the right */}
-                <div className="flex flex-col items-end gap-3">
-                  {/* Product Image on the right (click to enlarge) */}
-                  <button
-                    type="button"
-                    onClick={() =>
-                      setEnlargedImage(
-                        product.photoUrl ||
-                        `https://ui-avatars.com/api/?name=${product.name?.charAt(0)}&background=4c51bf&color=fff&size=512`
-                      )
-                    }
-                    className="relative w-28 h-28 rounded-full overflow-hidden border-4 border-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 shadow-md transform transition duration-300 hover:scale-105 hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-indigo-400"
-                  >
-                    <img
-                      src={
-                        product.photoUrl ||
-                        `https://ui-avatars.com/api/?name=${product.name?.charAt(0)}&background=4c51bf&color=fff&size=128`
-                      }
-                      alt={product.name}
-                      className="w-full h-full object-cover object-center"
-                    />
-                  </button>
+                <div>
+                  <label className="flex flex-col gap-1 text-xs sm:text-sm font-medium text-slate-700 dark:text-slate-200">
+                    <span>Product image</span>
+                    <label className="flex flex-col items-center justify-center w-full h-28 sm:h-32 border-2 border-dashed border-slate-300 dark:border-slate-600 rounded-lg cursor-pointer bg-slate-50 dark:bg-slate-900 hover:bg-slate-100 dark:hover:bg-slate-800 transition">
+                      <div className="flex flex-col items-center justify-center pt-4 pb-4">
+                        <svg
+                          className="w-7 h-7 mb-2 text-slate-400 dark:text-slate-300"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth="2"
+                            d="M7 16V4m0 0l-4 4m4-4l4 4M17 8v12m0 0l-4-4m4 4l4-4"
+                          />
+                        </svg>
+                        <p className="mb-1 text-[11px] sm:text-xs text-slate-500 dark:text-slate-400">
+                          <span className="font-semibold">Click to upload</span>{" "}
+                          or drag and drop
+                        </p>
+                        <p className="text-[10px] sm:text-[11px] text-slate-500 dark:text-slate-400">
+                          PNG, JPG, JPEG
+                        </p>
+                      </div>
+                      <input
+                        type="file"
+                        accept="image/*"
+                        onChange={(e) => {
+                          const file = e.target.files?.[0] || null;
+                          setPhotoFile(file);
+                          if (file) {
+                            setForm((prev) => ({ ...prev, photoUrl: "" }));
+                          }
+                        }}
+                        className="hidden"
+                      />
+                    </label>
+                  </label>
+                </div>
+              </div>
 
-                  {/* Actions row, nicely aligned */}
-                  <div className="flex w-full justify-end items-center gap-4">
-                    <button
-                      onClick={() => handleEdit(product)}
-                      className="inline-flex items-center justify-center rounded-full border border-indigo-200 dark:border-indigo-500/60 bg-indigo-50/70 dark:bg-indigo-900/40 px-3 py-2 text-sm text-indigo-700 dark:text-indigo-300 hover:bg-indigo-100 dark:hover:bg-indigo-800 transition-shadow shadow-sm hover:shadow-md"
-                      title="Edit Product"
-                    >
-                      <FaEdit className="mr-1" />
-                      <span className="hidden sm:inline">Edit</span>
-                    </button>
-                    <button
-                      onClick={() => confirmDelete(product._id)}
-                      className="inline-flex items-center justify-center rounded-full border border-red-200 dark:border-red-500/60 bg-red-50/80 dark:bg-red-900/40 px-3 py-2 text-sm text-red-700 dark:text-red-300 hover:bg-red-100 dark:hover:bg-red-800 transition-shadow shadow-sm hover:shadow-md"
-                      title="Delete Product"
-                    >
-                      <FaTrashAlt className="mr-1" />
-                      <span className="hidden sm:inline">Delete</span>
-                    </button>
+              {photoFile && (
+                <div className="flex justify-center mt-3">
+                  <div className="relative w-28 h-28 sm:w-32 sm:h-32 rounded-full overflow-hidden border-2 border-sky-400 shadow-sm transform transition hover:scale-105">
+                    <img
+                      src={URL.createObjectURL(photoFile)}
+                      alt="Preview"
+                      className="w-full h-full object-cover"
+                    />
                   </div>
                 </div>
-              </motion.div>
-            ))}
+             ) }
+
+              <div className="flex justify-center gap-4 mt-4">
+                <button
+                  type="submit"
+                  className="px-6 py-2.5 bg-sky-500 hover:bg-sky-400 text-xs sm:text-sm text-white rounded-full font-semibold shadow-md transition transform hover:scale-105"
+                >
+                  {editingId ? "Update product" : "Create product"}
+                </button>
+                {editingId && (
+                  <button
+                    type="button"
+                    onClick={cancelEdit}
+                    className="px-5 py-2.5 bg-slate-200 dark:bg-slate-700 text-xs sm:text-sm text-slate-800 dark:text-slate-50 rounded-full hover:bg-slate-300 dark:hover:bg-slate-600 transition font-semibold"
+                  >
+                    Cancel
+                  </button>
+                )}
+              </div>
+            </form>
           </div>
-        </div>
-
-        {/* Form Section */}
-        <div className="max-w-4xl mx-auto">
-          <h2 className="text-xl font-semibold mb-6 text-center text-indigo-700 dark:text-indigo-400">
-            {editingId ? "✏️ Edit Product" : "➕ Create New Product"}
-          </h2>
-
-         <form
-  onSubmit={handleSubmit}
-  className="bg-white dark:bg-gray-800 p-10 rounded-2xl shadow-xl space-y-6 border border-gray-200 dark:border-gray-700"
->
-  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-    {/* Left column: stacked inputs */}
-    <div className="flex flex-col gap-6">
-      <input
-        type="text"
-        placeholder="Product Name"
-        value={form.name}
-        onChange={(e) => setForm({ ...form, name: e.target.value })}
-        className="p-3 border rounded-lg bg-white dark:bg-gray-700 text-black dark:text-white focus:ring-2 focus:ring-indigo-500 outline-none"
-        required
-      />
-      <input
-        type="text"
-        placeholder="Variant"
-        value={form.variant}
-        onChange={(e) => setForm({ ...form, variant: e.target.value })}
-        className="p-3 border rounded-lg bg-white dark:bg-gray-700 text-black dark:text-white focus:ring-2 focus:ring-indigo-500 outline-none"
-        required
-      />
-      <input
-        type="number"
-        placeholder="Initial Quantity"
-        min="1"
-        value={form.initialQuantity}
-        onChange={(e) =>
-          setForm({
-            ...form,
-            initialQuantity: Math.max(0, Number(e.target.value)),
-          })
-        }
-        className="p-3 border rounded-lg bg-white dark:bg-gray-700 text-black dark:text-white focus:ring-2 focus:ring-indigo-500 outline-none"
-        required
-      />
-    </div>
-
-    {/* Right column: file upload */}
-    <div>
-      <label className="flex flex-col gap-1 text-sm font-medium text-gray-700 dark:text-gray-300">
-        <span>Product Image</span>
-        <div className="flex items-center gap-3">
-          <label className="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg cursor-pointer bg-gray-50 dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 transition">
-            <div className="flex flex-col items-center justify-center pt-5 pb-6">
-              <svg
-                className="w-8 h-8 mb-3 text-gray-400 dark:text-gray-300"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                  d="M7 16V4m0 0l-4 4m4-4l4 4M17 8v12m0 0l-4-4m4 4l4-4"
-                />
-              </svg>
-              <p className="mb-2 text-sm text-gray-500 dark:text-gray-400">
-                <span className="font-semibold">Click to upload</span> or drag and drop
-              </p>
-              <p className="text-xs text-gray-500 dark:text-gray-400">
-                PNG, JPG, JPEG (max 5MB)
-              </p>
-            </div>
-            <input
-              type="file"
-              accept="image/*"
-              onChange={(e) => {
-                setPhotoFile(e.target.files?.[0] || null);
-                setForm({ ...form, photoUrl: "" });
-              }}
-              className="hidden"
-            />
-          </label>
-        </div>
-      </label>
-    </div>
-  </div>
-
-  {/* Preview */}
-  {photoFile && (
-    <div className="flex justify-center mt-6">
-      <div className="relative w-40 h-40 rounded-full overflow-hidden border-4 border-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 shadow-lg transform transition duration-300 hover:scale-105 hover:shadow-xl">
-        <img
-          src={URL.createObjectURL(photoFile)}
-          alt="Preview"
-          className="w-full h-full object-cover"
-        />
+        </section>
       </div>
-    </div>
-  )}
 
-  {/* Buttons */}
-  <div className="flex justify-center gap-6 mt-6">
-    <button
-      type="submit"
-      className="px-8 py-3 bg-indigo-600 hover:bg-indigo-700 hover:brightness-110 text-white rounded-lg font-semibold shadow-md transition transform hover:scale-105"
-    >
-      {editingId ? "Update Product" : "Create Product"}
-    </button>
-    {editingId && (
-      <button
-        type="button"
-        onClick={cancelEdit}
-        className="px-6 py-3 bg-gray-300 dark:bg-gray-700 text-black dark:text-white rounded-lg hover:bg-gray-400 dark:hover:bg-gray-600 transition font-semibold"
-      >
-        Cancel
-      </button>
-    )}
-  </div>
-</form>
-        </div>
-      </section>
-    </div>
-
-    {/* Delete Confirmation Modal */}
-    <AnimatePresence>
-      {showDeleteConfirm && (
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          transition={{ duration: 0.3 }}
-          className="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm flex items-center justify-center z-[999]"
-        >
+      {/* delete confirmation */}
+      <AnimatePresence>
+        {showDeleteConfirm && (
           <motion.div
-            initial={{ scale: 0.9, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            exit={{ scale: 0.9, opacity: 0 }}
-            transition={{ duration: 0.3 }}
-            className="bg-white dark:bg-gray-900 p-8 rounded-2xl shadow-2xl max-w-sm w-full text-center border border-gray-200 dark:border-gray-700"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-[999]"
           >
-            <h3 className="text-lg font-semibold text-gray-800 dark:text-white mb-6">
-              Are you sure you want to delete this product?
-            </h3>
-            <div className="flex justify-center gap-6">
-              {/* Delete button */}
-              <button
-                onClick={() => {
-                  handleDeleteConfirmed(deleteTargetId);
-                  setShowDeleteConfirm(false);
-                  setDeleteTargetId(null);
-                }}
-                className="px-6 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 hover:scale-105 transition transform font-semibold shadow-md"
-              >
-                Delete
-              </button>
-
-              {/* Cancel button */}
-              <button
-                onClick={() => {
-                  setShowDeleteConfirm(false);
-                  setDeleteTargetId(null);
-                }}
-                className="px-6 py-2 bg-gray-300 dark:bg-gray-700 text-gray-800 dark:text-white rounded-lg hover:bg-gray-400 dark:hover:bg-gray-600 transition font-semibold"
-              >
-                Cancel
-              </button>
-            </div>
+            <motion.div
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.9, opacity: 0 }}
+              className="bg-white dark:bg-slate-900 p-6 rounded-2xl shadow-2xl max-w-sm w-full text-center border border-slate-200 dark:border-slate-700"
+            >
+              <h3 className="text-sm sm:text-base font-semibold text-slate-900 dark:text-slate-50 mb-4">
+                Are you sure you want to delete this product?
+              </h3>
+              <div className="flex justify-center gap-4">
+                <button
+                  onClick={handleDeleteConfirmed}
+                  className="px-5 py-2 bg-rose-600 text-white rounded-full hover:bg-rose-500 hover:scale-105 transition font-semibold shadow-md text-xs sm:text-sm"
+                >
+                  Delete
+                </button>
+                <button
+                  onClick={() => {
+                    setShowDeleteConfirm(false);
+                    setDeleteTargetId(null);
+                  }}
+                  className="px-5 py-2 bg-slate-200 dark:bg-slate-700 text-slate-800 dark:text-slate-50 rounded-full hover:bg-slate-300 dark:hover:bg-slate-600 transition font-semibold text-xs sm:text-sm"
+                >
+                  Cancel
+                </button>
+              </div>
+            </motion.div>
           </motion.div>
-        </motion.div>
-      )}
-    </AnimatePresence>
+        )}
+      </AnimatePresence>
 
-    {/* Image Lightbox / Enlarge Modal */}
-    <AnimatePresence>
-      {enlargedImage && (
-        <motion.div
-          key="image-lightbox"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          transition={{ duration: 0.2 }}
-          className="fixed inset-0 z-[9999] bg-black/70 backdrop-blur-sm flex items-center justify-center p-8"
-          onClick={() => setEnlargedImage(null)}  // click anywhere to close
-        >
+      {/* image lightbox */}
+      <AnimatePresence>
+        {enlargedImage && (
           <motion.div
-            initial={{ scale: 0.85, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            exit={{ scale: 0.85, opacity: 0 }}
-            transition={{ duration: 0.2 }}
-            className="relative w-96 h-96 rounded-full overflow-hidden shadow-2xl border-8 border-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 bg-black/20"
-            onClick={(e) => e.stopPropagation()}  // prevent close when clicking on image
+            key="image-lightbox"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[9999] bg-black/70 backdrop-blur-sm flex items-center justify-center p-6"
+            onClick={() => setEnlargedImage(null)}
           >
-            <img
-              src={enlargedImage}
-              alt="Enlarged product"
-              className="w-full h-full object-cover"
-            />
+            <motion.div
+              initial={{ scale: 0.85, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.85, opacity: 0 }}
+              className="relative w-64 h-64 sm:w-72 sm:h-72 rounded-full overflow-hidden shadow-2xl border-4 border-sky-400 bg-black/20"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <img
+                src={enlargedImage}
+                alt="Enlarged product"
+                className="w-full h-full object-cover"
+              />
+            </motion.div>
           </motion.div>
-        </motion.div>
-      )}
-    </AnimatePresence>
-  </main>
-);
+        )}
+      </AnimatePresence>
+    </main>
+  );
 }
