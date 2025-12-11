@@ -62,12 +62,12 @@ function MemberProfile() {
     }&background=0ea5e9&color=fff`;
 
   return (
-    <main className="min-h-screen bg-slate-50 dark:bg-slate-950">
-      <div className="max-w-xl mx-auto px-4 py-8 sm:px-6 lg:px-8 overflow-hidden">
+    <main className="min-h-screen bg-slate-50 dark:bg-slate-950 overflow-x-hidden">
+      <div className="w-full max-w-xl mx-auto px-4 py-8 sm:px-6 lg:px-8">
         <div className="relative">
-          {/* soft blobs, smaller so they don't force zoom */}
-          <div className="pointer-events-none absolute -top-16 -left-16 h-28 w-28 rounded-full bg-sky-300/30 blur-3xl dark:bg-sky-500/30" />
-          <div className="pointer-events-none absolute -bottom-16 -right-16 h-32 w-32 rounded-full bg-indigo-300/30 blur-3xl dark:bg-indigo-600/30" />
+          {/* blobs shrunk & kept inside */}
+          <div className="pointer-events-none absolute -top-10 -left-10 h-24 w-24 rounded-full bg-sky-300/30 blur-3xl dark:bg-sky-500/30" />
+          <div className="pointer-events-none absolute -bottom-10 -right-10 h-24 w-24 rounded-full bg-indigo-300/30 blur-3xl dark:bg-indigo-600/30" />
 
           <div className="relative bg-white/95 dark:bg-slate-900/95 rounded-2xl sm:rounded-3xl border border-slate-200 dark:border-slate-800 shadow-lg px-5 py-7 sm:px-7 sm:py-8 text-center">
             {user.role === "admin" && (
