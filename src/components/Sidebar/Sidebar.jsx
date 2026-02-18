@@ -7,17 +7,46 @@ import {
   FaInfoCircle,
   FaEnvelope,
   FaSignOutAlt,
+  FaExclamationTriangle,
+  FaUser, // Added for profile icon
 } from "react-icons/fa";
 
 function Sidebar({ isOpen, onClose, user, activeSection, onNavClick }) {
   const API_PORT = import.meta.env.VITE_API_PORT;
   const [showLeaveConfirm, setShowLeaveConfirm] = useState(false);
+  const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
   const [leaveMessage, setLeaveMessage] = useState("");
   const [adminRequestMessage, setAdminRequestMessage] = useState("");
+  // Add state for admin requests
+  const [adminRequests, setAdminRequests] = useState([]);
 
+  // Fetch admin requests if user is admin
+  useEffect(() => {
+    const fetchAdminRequests = async () => {
+      if (user?.isAdmin) {
+        try {
+          const res = await fetch(`${API_PORT}/api/v1/auth/admin-requests`, {
+            method: "GET",
+            credentials: "include",
+          });
+          if (res.ok) {
+            const data = await res.json();
+            setAdminRequests(data.requests || []);
+          }
+        } catch (err) {
+          console.error("Error fetching admin requests:", err);
+        }
+      }
+    };
+    fetchAdminRequests();
+  }, [user, API_PORT]);
   useEffect(() => {
     const handleEscape = (e) => {
-      if (e.key === "Escape") onClose();
+      if (e.key === "Escape") {
+        setShowLeaveConfirm(false);
+        setShowLogoutConfirm(false);
+        onClose();
+      }
     };
     document.addEventListener("keydown", handleEscape);
     return () => document.removeEventListener("keydown", handleEscape);
@@ -104,7 +133,11 @@ function Sidebar({ isOpen, onClose, user, activeSection, onNavClick }) {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            onClick={onClose}
+            onClick={() => {
+              setShowLeaveConfirm(false);
+              setShowLogoutConfirm(false);
+              onClose();
+            }}
           />
         )}
       </AnimatePresence>
@@ -124,7 +157,11 @@ function Sidebar({ isOpen, onClose, user, activeSection, onNavClick }) {
             </span>
           </h2>
           <button
-            onClick={onClose}
+            onClick={() => {
+              setShowLeaveConfirm(false);
+              setShowLogoutConfirm(false);
+              onClose();
+            }}
             aria-label="Close sidebar"
             className="text-slate-500 hover:text-rose-500 dark:text-slate-300 dark:hover:text-rose-400 transition-colors"
           >
@@ -155,7 +192,7 @@ function Sidebar({ isOpen, onClose, user, activeSection, onNavClick }) {
           </div>
         </div>
 
-        {/* nav */}
+        {/* nav - FIRST 4 BUTTONS (unchanged, perfect spacing) */}
         <nav className="flex-1 px-4 py-4 space-y-1 overflow-y-auto">
           <button
             type="button"
@@ -205,9 +242,236 @@ function Sidebar({ isOpen, onClose, user, activeSection, onNavClick }) {
             <span>More</span>
           </button>
 
-          {/* keep your admin / logout section here */}
+          {/* BOTTOM SECTION - Proper margins/spacing for all buttons */}
+          <div className="mt-6 border-t border-slate-200 dark:border-slate-800 pt-6 space-y-2">
+            {/* Profile Option - Available to ALL users */}
+            <button
+              type="button"
+              onClick={() => {
+                window.location.href = "/profile";
+                onClose();
+              }}
+              className={sectionBtnClass("profile")}
+            >
+              <FaUser className="text-sm" />
+              <span>Profile</span>
+            </button>
+
+            {user?.role === 'admin' ? (
+              <>
+                {/* View Admin Requests Button */}
+                <button
+                  type="button"
+                  onClick={() => {
+                    window.location.href = "/admin/requests";
+                  }}
+                  className={sectionBtnClass("admin-requests")}
+                >
+                  <FaUserCircle className="text-sm" />
+                  <span>View Admin Requests</span>
+                </button>
+
+                {/* Pending Admin Requests List */}
+                <div className="mb-3">
+                  {adminRequests.length > 0 && (
+                    <ul className="space-y-2 text-sm">
+                      {adminRequests.map((req) => (
+                        <li
+                          key={req.id}
+                          className="p-2 rounded-md bg-slate-100 dark:bg-slate-800 flex justify-between items-center"
+                        >
+                          <span className="text-slate-700 dark:text-slate-300">
+                            {req.username} ({req.email})
+                          </span>
+                          {/* Approve / Reject buttons */}
+                          <div className="flex gap-2">
+                            <button
+                              onClick={async () => {
+                                try {
+                                  await fetch(`${API_PORT}/api/v1/auth/approve-admin/${req.id}`, {
+                                    method: "POST",
+                                    credentials: "include",
+                                  });
+                                  setAdminRequests((prev) =>
+                                    prev.filter((r) => r.id !== req.id)
+                                  );
+                                } catch (err) {
+                                  console.error("Approve failed:", err);
+                                }
+                              }}
+                              className="px-2 py-1 bg-sky-500 text-white rounded hover:bg-sky-600 text-xs"
+                            >
+                              Approve
+                            </button>
+                            <button
+                              onClick={async () => {
+                                try {
+                                  await fetch(`${API_PORT}/api/v1/auth/reject-admin/${req.id}`, {
+                                    method: "POST",
+                                    credentials: "include",
+                                  });
+                                  setAdminRequests((prev) =>
+                                    prev.filter((r) => r.id !== req.id)
+                                  );
+                                } catch (err) {
+                                  console.error("Reject failed:", err);
+                                }
+                              }}
+                              className="px-2 py-1 bg-rose-500 text-white rounded hover:bg-rose-600 text-xs"
+                            >
+                              Reject
+                            </button>
+                          </div>
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </div>
+
+                {/* Leave Admin Role */}
+                <button
+                  type="button"
+                  onClick={() => setShowLeaveConfirm(true)}
+                  className={sectionBtnClass("leave-admin")}
+                >
+                  <FaSignOutAlt className="text-sm" />
+                  <span>Leave Admin Role</span>
+                </button>
+              </>
+            ) : (
+              <>
+                {/* Submit Admin Request */}
+                <button
+                  type="button"
+                  onClick={handleAdminRequest}
+                  className={sectionBtnClass("request-admin")}
+                >
+                  <FaUserCircle className="text-sm" />
+                  <span>Request Admin Access</span>
+                </button>
+                {adminRequestMessage && (
+                  <p className="mt-2 text-xs text-slate-600 dark:text-slate-400 px-3">
+                    {adminRequestMessage}
+                  </p>
+                )}
+              </>
+            )}
+
+            {/* Logout - Extra spacing at bottom */}
+            <button
+              type="button"
+              onClick={() => setShowLogoutConfirm(true)}
+              className="flex items-center gap-2 px-3 py-2.5 w-full rounded-xl text-sm font-semibold bg-gradient-to-r from-rose-500 to-rose-600 text-white shadow-lg hover:shadow-xl hover:from-rose-600 hover:to-rose-700 active:scale-95 transition-all duration-200 border border-rose-400/50 mt-4"
+            >
+              <FaSignOutAlt className="text-sm -ml-0.5" />
+              <span>Logout</span>
+            </button>
+          </div>
         </nav>
       </motion.aside>
+
+      {/* Leave Admin Confirmation Modal */}
+      <AnimatePresence>
+        {showLeaveConfirm && (
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.9 }}
+            className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm"
+            onClick={(e) => e.target === e.currentTarget && setShowLeaveConfirm(false)}
+          >
+            <motion.div
+              initial={{ y: 20, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              exit={{ y: 20, opacity: 0 }}
+              transition={{ type: "spring", damping: 25, stiffness: 300 }}
+              className="bg-white/95 dark:bg-slate-900/95 backdrop-blur-md rounded-2xl p-6 w-full max-w-md border border-slate-200/50 dark:border-slate-700/50 shadow-2xl"
+            >
+              <div className="flex items-start gap-3 mb-4">
+                <div className="flex-shrink-0 w-10 h-10 bg-amber-100 dark:bg-amber-900/50 rounded-xl flex items-center justify-center mt-0.5">
+                  <FaExclamationTriangle className="w-5 h-5 text-amber-600 dark:text-amber-400" />
+                </div>
+                <div>
+                  <h3 className="font-semibold text-lg text-slate-900 dark:text-slate-50 mb-1">
+                    Leave Admin Role?
+                  </h3>
+                  <p className="text-sm text-slate-600 dark:text-slate-400 leading-relaxed">
+                    This action will remove your admin privileges. You can request access again later.
+                  </p>
+                </div>
+              </div>
+              <div className="flex gap-3 pt-4 border-t border-slate-200/50 dark:border-slate-700/50">
+                <button
+                  onClick={handleLeaveAdmin}
+                  className="flex-1 px-4 py-2.5 bg-rose-500 hover:bg-rose-600 text-white font-medium rounded-xl shadow-lg hover:shadow-xl active:scale-95 transition-all duration-200 border border-rose-400/50"
+                >
+                  Yes, Leave
+                </button>
+                <button
+                  onClick={() => setShowLeaveConfirm(false)}
+                  className="flex-1 px-4 py-2.5 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-900 dark:text-slate-100 font-medium rounded-xl shadow-lg hover:shadow-xl active:scale-95 transition-all duration-200 border border-slate-200/50 dark:border-slate-700/50"
+                >
+                  Cancel
+                </button>
+              </div>
+              {leaveMessage && (
+                <p className="mt-3 px-1 py-2 bg-emerald-100 dark:bg-emerald-900/50 border border-emerald-200/50 dark:border-emerald-800/50 rounded-lg text-xs text-emerald-800 dark:text-emerald-200 text-center font-medium">
+                  {leaveMessage}
+                </p>
+              )}
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Logout Confirmation Modal */}
+      <AnimatePresence>
+        {showLogoutConfirm && (
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.9 }}
+            className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm"
+            onClick={(e) => e.target === e.currentTarget && setShowLogoutConfirm(false)}
+          >
+            <motion.div
+              initial={{ y: 20, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              exit={{ y: 20, opacity: 0 }}
+              transition={{ type: "spring", damping: 25, stiffness: 300 }}
+              className="bg-white/95 dark:bg-slate-900/95 backdrop-blur-md rounded-2xl p-6 w-full max-w-md border border-slate-200/50 dark:border-slate-700/50 shadow-2xl"
+            >
+              <div className="flex items-start gap-3 mb-4">
+                <div className="flex-shrink-0 w-10 h-10 bg-rose-100 dark:bg-rose-900/50 rounded-xl flex items-center justify-center mt-0.5">
+                  <FaSignOutAlt className="w-5 h-5 text-rose-600 dark:text-rose-400" />
+                </div>
+                <div>
+                  <h3 className="font-semibold text-lg text-slate-900 dark:text-slate-50 mb-1">
+                    Sign Out?
+                  </h3>
+                  <p className="text-sm text-slate-600 dark:text-slate-400 leading-relaxed">
+                    You will need to log in again to access your account.
+                  </p>
+                </div>
+              </div>
+              <div className="flex gap-3 pt-4 border-t border-slate-200/50 dark:border-slate-700/50">
+                <button
+                  onClick={handleLogout}
+                  className="flex-1 px-4 py-2.5 bg-gradient-to-r from-rose-500 to-rose-600 hover:from-rose-600 hover:to-rose-700 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl active:scale-95 transition-all duration-200 border border-rose-400/50"
+                >
+                  Sign Out
+                </button>
+                <button
+                  onClick={() => setShowLogoutConfirm(false)}
+                  className="flex-1 px-4 py-2.5 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-900 dark:text-slate-100 font-medium rounded-xl shadow-lg hover:shadow-xl active:scale-95 transition-all duration-200 border border-slate-200/50 dark:border-slate-700/50"
+                >
+                  Stay
+                </button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </>
   );
 }
