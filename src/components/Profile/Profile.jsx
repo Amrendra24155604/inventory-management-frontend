@@ -113,10 +113,9 @@ function CompleteProfile() {
 
   return (
     <main className="min-h-screen w-full bg-slate-50 dark:bg-slate-950 flex items-center justify-center px-4 py-8 sm:px-6 lg:px-8">
-      <div className="relative w-full max-w-3xl">
+      <div className="relative w-full max-w-3xl mx-auto"> {/* Added mx-auto */}
         {/* soft blobs */}
         <div className="pointer-events-none absolute -top-16 -left-20 h-40 w-40 rounded-full bg-sky-300/30 blur-3xl dark:bg-sky-500/30" />
-        <div className="pointer-events-none absolute -bottom-16 -right-24 h-44 w-44 rounded-full bg-indigo-300/30 blur-3xl dark:bg-indigo-600/30" />
 
         <div className="relative bg-white/95 dark:bg-slate-900/95 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-lg px-4 py-6 sm:px-6 sm:py-8">
           {isEditing ? (
