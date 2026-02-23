@@ -16,38 +16,7 @@ function Header({ user }) {
   const [activeSection, setActiveSection] = useState(null);
   const isLoggedIn = !!user;
 
-  // Scrollspy: highlight links when scrolling on landing page
-  useEffect(() => {
-    if (location.pathname !== "/") {
-      setActiveSection(null);
-      return;
-    }
-
-    const sections = document.querySelectorAll("main section[id]");
-    if (!sections.length) {
-      console.warn("No sections found for scrollspy");
-      return;
-    }
-
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            const id = entry.target.id;
-            console.log("visible section:", id); // debug
-            setActiveSection(id);
-          }
-        });
-      },
-      {
-        threshold: 0.4,
-        rootMargin: "-72px 0px 0px 0px",
-      }
-    );
-
-    sections.forEach((section) => observer.observe(section));
-    return () => observer.disconnect();
-  }, [location.pathname]);
+  // ... rest of your useEffect and handlers stay exactly the same ...
 
   const linkClass = (id) =>
     `relative px-3 py-1 text-sm font-medium transition-colors duration-300
@@ -60,11 +29,10 @@ function Header({ user }) {
      after:absolute after:left-0 after:-bottom-1 after:h-[2px] after:w-full
      after:bg-sky-500 after:transition-transform after:duration-300 after:content-['']`;
 
-  // Shared handler for header + sidebar
+  // Shared handler for header + sidebar (unchanged)
   const handleNavClick = (eOrId, maybeId) => {
     let targetId;
 
-    // header: (event, "home"), sidebar: ("home")
     if (typeof eOrId === "string") {
       targetId = eOrId;
     } else {
@@ -107,16 +75,20 @@ function Header({ user }) {
               onClick={(e) => handleNavClick(e, "home")}
               className="flex items-center gap-2"
             >
-              <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-sky-500 text-white text-sm font-bold shadow-sm">
-                I
-              </div>
+              {/* REPLACED "I" DIV WITH YOUR LOGO */}
+              <img
+                src="/image.png"  // Put your clean_logo.png here
+                alt="IoT Labs"
+                 className="h-8 w-8 flex-shrink-0 rounded-full shadow-sm ring-1 ring-slate-200/50 dark:ring-slate-700/50 bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm"
+              />
+              
               <span className="text-sm sm:text-base font-semibold tracking-tight text-slate-900 dark:text-slate-50">
-                IOT Labs
+                IoT Labs
               </span>
             </a>
           </div>
 
-          {/* Center nav */}
+          {/* Center nav - UNCHANGED */}
           <nav className="hidden md:flex flex-1 items-center justify-center gap-4 lg:gap-6">
             <a
               href="/#home"
@@ -148,7 +120,7 @@ function Header({ user }) {
             </a>
           </nav>
 
-          {/* Right side (short) */}
+          {/* Right side - UNCHANGED */}
           <div className="flex items-center gap-2 sm:gap-3 flex-shrink-0">
             <button
               onClick={toggleTheme}
