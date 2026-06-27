@@ -100,20 +100,26 @@ export default function BorrowList() {
   const sortedRequests =
     selectedStatus === "approved"
       ? [...grouped.approved].sort((a, b) => {
-          const aCanReturn = a.returnStatus !== "complete";
-          const bCanReturn = b.returnStatus !== "complete";
-          return bCanReturn - aCanReturn;
-        })
+        const aCanReturn = a.returnStatus !== "complete";
+        const bCanReturn = b.returnStatus !== "complete";
+        return bCanReturn - aCanReturn;
+      })
       : grouped[selectedStatus];
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 px-4 py-5 sm:px-6 lg:px-8">
-      <h2 className="relative text-2xl sm:text-3xl md:text-4xl font-semibold text-center text-slate-900 dark:text-slate-50 mb-8 sm:mb-10">
-  📦 Your{" "}
-  <span className="bg-gradient-to-r from-sky-500 to-indigo-500 bg-clip-text text-transparent">
-    borrowed items
-  </span>
-</h2>
+    <div className="min-h-screen bg-transparent dark:bg-transparent px-4 py-5 sm:px-6 lg:px-8">
+      <div className="flex flex-col items-center mb-8 sm:mb-10">
+        <span className="text-[10px] sm:text-xs font-bold uppercase tracking-[0.2em] text-sky-500 font-mono mb-2">
+          User Account
+        </span>
+        <h2 className="relative text-2xl sm:text-3xl md:text-4xl font-extrabold text-center text-slate-900 dark:text-white font-display">
+          Your{" "}
+          <span className="bg-gradient-to-r from-sky-400 to-indigo-500 bg-clip-text text-transparent">
+            borrowed items
+          </span>
+        </h2>
+        <div className="h-0.5 w-12 bg-gradient-to-r from-sky-400 to-indigo-500 rounded-full mt-3.5" />
+      </div>
 
 
       {/* Status tabs */}
@@ -122,11 +128,10 @@ export default function BorrowList() {
           <button
             key={status}
             onClick={() => setSelectedStatus(status)}
-            className={`px-4 py-2 rounded-full font-medium text-xs sm:text-sm transition-all ${
-              selectedStatus === status
-                ? "bg-sky-500 text-white shadow-md"
-                : "bg-white text-sky-700 border border-slate-200 hover:bg-sky-50 dark:bg-slate-900 dark:text-slate-100 dark:border-slate-700 dark:hover:bg-slate-800"
-            }`}
+            className={`px-4 py-2 rounded-full text-xs sm:text-sm font-semibold tracking-wide transition-all duration-300 hover:scale-[1.05] active:scale-95 shadow-sm ${selectedStatus === status
+              ? "bg-gradient-to-r from-sky-500 to-indigo-500 text-white shadow-lg shadow-sky-500/25"
+              : "backdrop-blur-md bg-white/60 text-slate-700 border border-slate-200 hover:bg-sky-500/5 hover:border-sky-500/30 dark:bg-slate-900/40 dark:text-slate-200 dark:border-slate-800 dark:hover:bg-sky-500/10 dark:hover:border-sky-500/30"
+              }`}
           >
             {statusLabels[status]}
           </button>
@@ -138,7 +143,7 @@ export default function BorrowList() {
         sortedRequests.map((req) => (
           <div
             key={req._id}
-            className="border border-slate-200 dark:border-slate-700 rounded-2xl shadow-sm p-4 sm:p-5 mb-6 bg-white/95 dark:bg-slate-900/95"
+            className="backdrop-blur-xl bg-white/70 dark:bg-slate-900/30 border border-slate-200/50 dark:border-slate-800/40 rounded-2xl shadow-md p-5 sm:p-6 mb-6 hover:shadow-xl hover:scale-[1.01] hover:border-sky-500/20 dark:hover:border-sky-500/30 transition-all duration-300"
           >
             {/* Header */}
             <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2 mb-3">
@@ -148,17 +153,16 @@ export default function BorrowList() {
               </p>
 
               <span
-                className={`inline-flex items-center justify-center px-3 py-1 rounded-full shadow-sm text-[11px] sm:text-xs font-semibold ${
-                  req.status === "approved"
-                    ? "bg-emerald-100 text-emerald-700 dark:bg-emerald-800 dark:text-emerald-100"
-                    : req.status === "returned"
+                className={`inline-flex items-center justify-center px-3 py-1 rounded-full shadow-sm text-[11px] sm:text-xs font-semibold ${req.status === "approved"
+                  ? "bg-emerald-100 text-emerald-700 dark:bg-emerald-800 dark:text-emerald-100"
+                  : req.status === "returned"
                     ? "bg-sky-100 text-sky-700 dark:bg-sky-800 dark:text-sky-100"
                     : req.status === "on hold"
-                    ? "bg-amber-100 text-amber-700 dark:bg-amber-800 dark:text-amber-100"
-                    : req.status === "declined"
-                    ? "bg-rose-100 text-rose-700 dark:bg-rose-800 dark:text-rose-100"
-                    : "bg-slate-100 text-slate-700 dark:bg-slate-700 dark:text-slate-100"
-                }`}
+                      ? "bg-amber-100 text-amber-700 dark:bg-amber-800 dark:text-amber-100"
+                      : req.status === "declined"
+                        ? "bg-rose-100 text-rose-700 dark:bg-rose-800 dark:text-rose-100"
+                        : "bg-slate-100 text-slate-700 dark:bg-slate-700 dark:text-slate-100"
+                  }`}
               >
                 {req.status.charAt(0).toUpperCase() + req.status.slice(1)}
               </span>
@@ -200,11 +204,11 @@ export default function BorrowList() {
                       {new Date(req.requestedAt).toLocaleString()}
                     </div>
 
-                   <h3 className="relative text-base sm:text-lg font-semibold text-slate-900 dark:text-slate-50 mb-2">
-  <span className="bg-gradient-to-r from-sky-500 to-indigo-500 bg-clip-text text-transparent">
-    {item.product?.name || "Unknown product"}
-  </span>
-</h3>
+                    <h3 className="relative text-base sm:text-lg font-semibold text-slate-900 dark:text-slate-50 mb-2">
+                      <span className="bg-gradient-to-r from-sky-500 to-indigo-500 bg-clip-text text-transparent">
+                        {item.product?.name || "Unknown product"}
+                      </span>
+                    </h3>
 
 
                     <div className="space-y-1.5 text-xs sm:text-sm text-slate-700 dark:text-slate-300">
@@ -263,11 +267,15 @@ export default function BorrowList() {
             {/* Return form */}
             {returningId === req._id && (
               <div className="mt-7 border-t border-slate-200 dark:border-slate-700 pt-6">
-                <h4 className="relative text-lg sm:text-xl font-semibold text-center text-slate-900 dark:text-slate-50 mb-4">
-  🔄 <span className="bg-gradient-to-r from-sky-500 to-indigo-500 bg-clip-text text-transparent">
-    return form
-  </span>
-</h4>
+                <div className="flex flex-col items-center mb-5">
+                  <span className="text-[9px] font-bold uppercase tracking-[0.15em] text-sky-500 font-mono mb-1.5">
+                    Action Required
+                  </span>
+                  <h4 className="relative text-lg sm:text-xl font-bold text-center text-slate-900 dark:text-white font-display">
+                    Return Form
+                  </h4>
+                  <div className="h-0.5 w-8 bg-sky-500 rounded-full mt-2" />
+                </div>
 
 
                 <div className="space-y-4 sm:space-y-6">
@@ -311,12 +319,12 @@ export default function BorrowList() {
                                   prev.map((i, idx) =>
                                     idx === index
                                       ? {
-                                          ...i,
-                                          quantityReturned: Math.min(
-                                            Number(e.target.value),
-                                            maxReturnable
-                                          ),
-                                        }
+                                        ...i,
+                                        quantityReturned: Math.min(
+                                          Number(e.target.value),
+                                          maxReturnable
+                                        ),
+                                      }
                                       : i
                                   )
                                 )
@@ -368,13 +376,12 @@ export default function BorrowList() {
                           </label>
 
                           <span
-                            className={`mt-1 px-3 py-1 text-[11px] sm:text-xs font-semibold rounded-full shadow-sm text-center ${
-                              item.condition === "good"
-                                ? "bg-emerald-100 text-emerald-700 dark:bg-emerald-800 dark:text-emerald-100"
-                                : item.condition === "damaged"
+                            className={`mt-1 px-3 py-1 text-[11px] sm:text-xs font-semibold rounded-full shadow-sm text-center ${item.condition === "good"
+                              ? "bg-emerald-100 text-emerald-700 dark:bg-emerald-800 dark:text-emerald-100"
+                              : item.condition === "damaged"
                                 ? "bg-amber-100 text-amber-700 dark:bg-amber-800 dark:text-amber-100"
                                 : "bg-rose-100 text-rose-700 dark:bg-rose-800 dark:text-rose-100"
-                            }`}
+                              }`}
                           >
                             {item.condition.charAt(0).toUpperCase() +
                               item.condition.slice(1)}

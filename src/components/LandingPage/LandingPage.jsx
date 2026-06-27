@@ -7,7 +7,7 @@
 
 // // function LandingPage() {
 // //   const { scrollYProgress } = useScroll();
-  
+
 // //   useEffect(() => {
 // //     document.documentElement.style.scrollBehavior = "smooth";
 // //   }, []);
@@ -29,7 +29,7 @@
 
 // //   return (
 // //     <main className="w-full bg-gradient-to-br from-slate-50 via-white to-sky-50 dark:from-slate-950 dark:via-slate-900 dark:to-slate-800 text-slate-900 dark:text-slate-100 relative">
-      
+
 // //       {/* HOME - Diagonal Wipe */}
 // //       <section id="home" className="min-h-screen flex items-center justify-center py-24 px-6 lg:px-12">
 // //         <motion.div
@@ -151,7 +151,7 @@
 
 //   return (
 //     <main className="w-full bg-gradient-to-br from-slate-50 via-white to-blue-50/80 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900 text-slate-900 dark:text-white relative">
-      
+
 //       {/* Subtle parallax background */}
 //       <motion.div 
 //         className="fixed inset-0 -z-10 bg-gradient-to-br from-blue-50/50 via-white/30 dark:from-slate-900/50 to-purple-50/30 dark:to-slate-800/50"
@@ -415,12 +415,15 @@ function LandingPage() {
   }, []);
 
   return (
-    <main className="min-h-screen w-full bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-50 relative overflow-hidden">
+    <main className="min-h-screen w-full bg-transparent dark:bg-transparent text-slate-900 dark:text-slate-100 relative overflow-hidden transition-colors duration-500">
       {/* Background */}
       <motion.div className="fixed inset-0 -z-20" style={{ y: bgY }}>
-        <div className="absolute inset-0 bg-gradient-to-br from-slate-100 via-white to-slate-100 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950" />
-        <div className="pointer-events-none absolute -top-32 -left-24 h-64 w-64 rounded-full bg-sky-400/25 blur-3xl dark:bg-sky-500/25" />
-        <div className="pointer-events-none absolute bottom-[-96px] right-[-64px] h-64 w-64 rounded-full bg-indigo-400/25 blur-3xl dark:bg-indigo-500/25" />
+        <div className="absolute inset-0 bg-gradient-to-br from-slate-50 via-white to-slate-50 dark:from-[#030712] dark:via-[#0a0f1d] dark:to-[#030712]" />
+
+        {/* Soft floating neon blobs */}
+        <div className="pointer-events-none absolute -top-48 -left-32 h-[450px] w-[450px] rounded-full bg-sky-400/20 blur-3xl dark:bg-sky-500/10 animate-pulse-glow" style={{ animationDuration: '8s' }} />
+        <div className="pointer-events-none absolute bottom-[-150px] right-[-100px] h-[550px] w-[550px] rounded-full bg-indigo-400/20 blur-3xl dark:bg-indigo-500/10 animate-pulse-glow" style={{ animationDuration: '12s' }} />
+        <div className="pointer-events-none absolute top-1/2 left-1/3 h-[350px] w-[350px] rounded-full bg-purple-400/10 blur-3xl dark:bg-purple-500/5 animate-pulse-glow" style={{ animationDuration: '10s' }} />
       </motion.div>
 
       {/* Scroll progress */}

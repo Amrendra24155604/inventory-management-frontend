@@ -73,7 +73,7 @@
 //         </section>
 //       </div>
 
-  
+
 //     </main>
 //   );
 // }
@@ -141,63 +141,63 @@ function Home() {
     <div className="space-y-10">
       {/* Hero card */}
       <motion.div
-        className="rounded-3xl bg-white/90 dark:bg-slate-900/90 border border-slate-200 dark:border-slate-800 shadow-lg px-5 py-8 sm:px-8 sm:py-10"
+        className="rounded-3xl backdrop-blur-xl bg-white/70 dark:bg-slate-900/30 border border-slate-200/60 dark:border-slate-800/40 shadow-xl shadow-slate-900/5 px-6 py-9 sm:px-10 sm:py-12"
         initial={{ opacity: 0, y: 30, scale: 0.98 }}
         whileInView={{ opacity: 1, y: 0, scale: 1 }}
         viewport={{ margin: "-20% 0px -10%", once: false }}
-        transition={{ duration: 0.5 }}
+        transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
       >
-        <div className="inline-flex items-center gap-2 rounded-full px-3 py-1 bg-sky-50 text-sky-700 text-[11px] font-semibold tracking-[0.18em] uppercase dark:bg-sky-900/40 dark:text-sky-300">
-          <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse" />
+        <div className="inline-flex items-center gap-2 rounded-full px-3 py-1 bg-sky-500/10 text-sky-600 border border-sky-500/20 text-[11px] font-bold tracking-[0.18em] uppercase dark:bg-sky-500/10 dark:text-sky-300 dark:border-sky-500/30">
+          <span className="h-2 w-2 rounded-full bg-emerald-400 animate-pulse" />
           IOT LABS • INVENTORY PRO
         </div>
 
-        <h1 className="mt-4 text-3xl sm:text-4xl lg:text-5xl font-semibold tracking-tight text-slate-900 dark:text-slate-50">
+        <h1 className="mt-6 text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-slate-900 dark:text-white leading-[1.1] font-display">
           Track, share, and protect
-          <span className="block bg-gradient-to-r from-sky-500 to-indigo-500 bg-clip-text text-transparent">
+          <span className="block bg-gradient-to-r from-sky-400 via-teal-400 to-indigo-500 bg-clip-text text-transparent mt-1">
             every lab component.
           </span>
         </h1>
 
-        <p className="mt-4 text-sm sm:text-base text-slate-600 dark:text-slate-300 max-w-xl leading-relaxed">
+        <p className="mt-5 text-sm sm:text-base text-slate-600 dark:text-slate-300 max-w-xl leading-relaxed">
           InventoryPro keeps components organized and accessible so students
           spend less time searching and more time building.
         </p>
 
-        <div className="mt-6 flex flex-col sm:flex-row gap-3 sm:gap-4">
+        <div className="mt-8 flex flex-col sm:flex-row gap-3 sm:gap-4">
           <Link
             to="/inventory"
-            className="w-full sm:w-auto inline-flex justify-center rounded-full bg-sky-500 px-6 py-2.75 text-sm font-semibold text-white shadow-md shadow-sky-500/30 hover:bg-sky-400 transition"
+            className="w-full sm:w-auto inline-flex justify-center rounded-full bg-sky-500 px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-sky-500/30 hover:bg-sky-400 hover:scale-[1.03] active:scale-95 transition-all duration-300"
           >
             Open inventory
           </Link>
           <Link
             to="/learn"
-            className="w-full sm:w-auto inline-flex justify-center rounded-full border border-sky-500/70 px-6 py-2.75 text-sm font-semibold text-sky-700 hover:bg-sky-50 dark:text-sky-200 dark:hover:bg-slate-900/60 transition"
+            className="w-full sm:w-auto inline-flex justify-center rounded-full border border-sky-500/50 px-6 py-3 text-sm font-semibold text-sky-700 hover:bg-sky-500/5 dark:text-sky-300 dark:border-sky-500/40 dark:hover:bg-sky-500/10 transition-all duration-300 hover:scale-[1.03] active:scale-95"
           >
             Learn more
           </Link>
         </div>
 
-        {/* Stats – big tap areas on mobile */}
-        <div className="mt-7 grid grid-cols-3 gap-3 text-xs sm:text-sm">
-          <div className="rounded-2xl bg-slate-50 border border-slate-100 px-3 py-3 text-left dark:bg-slate-900 dark:border-slate-700">
-            <p className="font-semibold text-slate-900 dark:text-slate-50">
+        {/* Stats – glassmorphic cards */}
+        <div className="mt-10 grid grid-cols-3 gap-3 sm:gap-4 text-xs sm:text-sm">
+          <div className="rounded-2xl bg-slate-50/50 border border-slate-100/60 px-4 py-4 text-left dark:bg-slate-950/20 dark:border-slate-800/40 shadow-sm hover:scale-[1.02] transition-transform duration-300">
+            <p className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white font-display">
               480+
             </p>
-            <p className="text-slate-500 dark:text-slate-400 text-[11px] sm:text-xs">
+            <p className="text-slate-500 dark:text-slate-400 text-[10px] sm:text-xs font-medium mt-0.5">
               Components tracked
             </p>
           </div>
-          <div className="rounded-2xl bg-slate-50 border border-slate-100 px-3 py-3 text-left dark:bg-slate-900 dark:border-slate-700">
-            <p className="font-semibold text-emerald-500">99.4%</p>
-            <p className="text-slate-500 dark:text-slate-400 text-[11px] sm:text-xs">
+          <div className="rounded-2xl bg-slate-50/50 border border-slate-100/60 px-4 py-4 text-left dark:bg-slate-950/20 dark:border-slate-800/40 shadow-sm hover:scale-[1.02] transition-transform duration-300">
+            <p className="text-xl sm:text-2xl font-bold text-emerald-500 font-display">99.4%</p>
+            <p className="text-slate-500 dark:text-slate-400 text-[10px] sm:text-xs font-medium mt-0.5">
               On‑time returns
             </p>
           </div>
-          <div className="rounded-2xl bg-slate-50 border border-slate-100 px-3 py-3 text-left dark:bg-slate-900 dark:border-slate-700">
-            <p className="font-semibold text-indigo-500">24 / 7</p>
-            <p className="text-slate-500 dark:text-slate-400 text-[11px] sm:text-xs">
+          <div className="rounded-2xl bg-slate-50/50 border border-slate-100/60 px-4 py-4 text-left dark:bg-slate-950/20 dark:border-slate-800/40 shadow-sm hover:scale-[1.02] transition-transform duration-300">
+            <p className="text-xl sm:text-2xl font-bold text-indigo-500 dark:text-indigo-400 font-display">24/7</p>
+            <p className="text-slate-500 dark:text-slate-400 text-[10px] sm:text-xs font-medium mt-0.5">
               Self‑service access
             </p>
           </div>
@@ -210,19 +210,19 @@ function Home() {
           {featureCards.map(({ icon: Icon, title, desc }) => (
             <motion.div
               key={title}
-              className="rounded-2xl bg-white/90 dark:bg-slate-900/90 border border-slate-200 dark:border-slate-800 px-4 py-5 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all"
+              className="rounded-2xl backdrop-blur-xl bg-white/60 dark:bg-slate-900/20 border border-slate-200/50 dark:border-slate-800/40 px-5 py-6 shadow-sm hover:shadow-lg hover:-translate-y-1 hover:scale-[1.02] hover:border-sky-500/20 dark:hover:border-sky-500/30 transition-all duration-300"
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ margin: "-20% 0px -10%", once: false }}
               transition={{ duration: 0.4 }}
             >
-              <div className="mb-3 inline-flex h-9 w-9 items-center justify-center rounded-xl bg-sky-50 text-sky-600 dark:bg-sky-900/40 dark:text-sky-300">
-                <Icon size={18} />
+              <div className="mb-4 inline-flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-sky-500/10 to-indigo-500/10 border border-sky-500/15 dark:border-sky-500/30 text-sky-600 dark:text-sky-300">
+                <Icon size={19} />
               </div>
-              <h3 className="text-sm sm:text-base font-semibold text-slate-900 dark:text-slate-50 mb-1">
+              <h3 className="text-sm sm:text-base font-bold text-slate-900 dark:text-white mb-1.5 font-display">
                 {title}
               </h3>
-              <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
+              <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-350 leading-relaxed">
                 {desc}
               </p>
             </motion.div>

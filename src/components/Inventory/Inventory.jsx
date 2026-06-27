@@ -212,24 +212,30 @@ export default function Inventory() {
   );
 
   const sections = [
-    { key: "pending", title: "⏳ Return Pending", data: returnPending },
-    { key: "approved", title: "✅ Approved Borrowed Items", data: approved, showReturn: true },
-    { key: "onHold", title: "⏸️ On Hold Requests", data: onHold },
-    { key: "returned", title: "📦 Returned Items", data: returned, showNotes: true },
-    { key: "history", title: "📜 Request History", data: history },
+    { key: "pending", title: "Return Pending", data: returnPending },
+    { key: "approved", title: "Approved Borrows", data: approved, showReturn: true },
+    { key: "onHold", title: "On Hold Requests", data: onHold },
+    { key: "returned", title: "Returned Items", data: returned, showNotes: true },
+    { key: "history", title: "Request History", data: history },
   ];
 
   return (
     <>
       {/* MAIN CONTENT */}
-      <div className="relative min-h-screen bg-slate-50 text-slate-900 p-4 sm:p-6 lg:p-8 dark:bg-slate-950 dark:text-slate-100 transition-colors duration-300">
+      <div className="relative min-h-screen bg-transparent text-slate-900 p-4 sm:p-6 lg:p-8 dark:bg-transparent dark:text-slate-100 transition-colors duration-300">
         {/* background */}
         <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=1600&fit=crop&crop=center')] bg-cover bg-center bg-no-repeat opacity-5 dark:opacity-10 -z-10" />
 
         {/* Available products */}
-        <h2 className="text-2xl sm:text-3xl font-semibold mb-6 sm:mb-8 text-center text-slate-900 dark:text-indigo-300 tracking-tight">
-          Available Products
-        </h2>
+        <div className="flex flex-col items-center mb-6 sm:mb-8">
+          <span className="text-[10px] sm:text-xs font-bold uppercase tracking-[0.2em] text-sky-500 font-mono mb-2">
+            Catalog
+          </span>
+          <h2 className="text-2xl sm:text-3xl font-extrabold text-center text-slate-900 dark:text-white font-display">
+            Available <span className="bg-gradient-to-r from-sky-400 to-indigo-500 bg-clip-text text-transparent">Products</span>
+          </h2>
+          <div className="h-0.5 w-12 bg-gradient-to-r from-sky-400 to-indigo-500 rounded-full mt-3.5" />
+        </div>
 
         <form
           onSubmit={(e) => {
@@ -245,11 +251,10 @@ export default function Inventory() {
               <div
                 key={product._id}
                 onClick={() => handleCheckboxToggle(product._id)}
-                className={`flex justify-between items-center p-4 sm:p-5 rounded-2xl cursor-pointer transition-all duration-300 border shadow-sm hover:shadow-lg ${
-                  isSelected
-                    ? "ring-2 ring-sky-500 bg-sky-50 dark:bg-slate-900"
-                    : "bg-white border-slate-200 dark:bg-slate-900 dark:border-slate-700"
-                }`}
+                className={`flex justify-between items-center p-4 sm:p-5 rounded-2xl cursor-pointer transition-all duration-300 border shadow-sm hover:shadow-xl hover:scale-[1.01] ${isSelected
+                  ? "ring-2 ring-sky-500 bg-sky-500/10 backdrop-blur-xl border-sky-500/30 dark:bg-sky-500/10 dark:border-sky-500/40 shadow-sky-500/5"
+                  : "backdrop-blur-xl bg-white/70 border-slate-200/50 dark:bg-slate-900/30 dark:border-slate-800/40 hover:border-sky-500/20 dark:hover:border-sky-500/20"
+                  }`}
               >
                 {/* info */}
                 <div className="flex flex-col items-start gap-1.5 text-left flex-1 pr-3">
@@ -289,9 +294,9 @@ export default function Inventory() {
                       e.stopPropagation();
                       setEnlargedImage(
                         product.photoUrl ||
-                          `https://ui-avatars.com/api/?name=${product.name?.charAt(
-                            0
-                          )}&background=0ea5e9&color=fff&size=256`
+                        `https://ui-avatars.com/api/?name=${product.name?.charAt(
+                          0
+                        )}&background=0ea5e9&color=fff&size=256`
                       );
                     }}
                     className="relative w-20 h-20 sm:w-24 sm:h-24 rounded-full overflow-hidden border-2 border-sky-400 shadow-md hover:shadow-lg hover:scale-105 transition"
@@ -383,21 +388,21 @@ export default function Inventory() {
         {/* Add your sections JSX here if needed */}
       </div>
 
-<AnimatePresence>
-  {successMessage && (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, y: 20 }}
-      transition={{ duration: 0.3 }}
-      className="fixed bottom-5 inset-x-0 flex justify-center z-[999]"
-    >
-      <div className="bg-sky-500/90 backdrop-blur-sm text-white px-6 py-3 rounded-2xl shadow-xl text-sm sm:text-base text-center max-w-[90vw] border border-sky-300/50">
-        {successMessage}
-      </div>
-    </motion.div>
-  )}
-</AnimatePresence>
+      <AnimatePresence>
+        {successMessage && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 20 }}
+            transition={{ duration: 0.3 }}
+            className="fixed bottom-5 inset-x-0 flex justify-center z-[999]"
+          >
+            <div className="bg-sky-500/90 backdrop-blur-sm text-white px-6 py-3 rounded-2xl shadow-xl text-sm sm:text-base text-center max-w-[90vw] border border-sky-300/50">
+              {successMessage}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
     </>
   );

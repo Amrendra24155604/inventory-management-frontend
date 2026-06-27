@@ -35,9 +35,8 @@ export default function AdminProductPage({ menuOpen = false }) {
       onClick={onClick}
       disabled={loading}
       whileTap={{ scale: 0.97 }}
-      className={`w-full sm:w-auto px-4 py-2 rounded-full shadow text-xs sm:text-sm font-semibold text-white flex items-center justify-center transition-all ${
-        loading ? "opacity-70 cursor-not-allowed" : ""
-      } ${color}`}
+      className={`w-full sm:w-auto px-4 py-2 rounded-full shadow text-xs sm:text-sm font-semibold text-white flex items-center justify-center transition-all ${loading ? "opacity-70 cursor-not-allowed" : ""
+        } ${color}`}
     >
       {loading ? (
         <>
@@ -228,7 +227,7 @@ export default function AdminProductPage({ menuOpen = false }) {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-50 px-4 py-8 sm:px-6 lg:px-8 relative overflow-hidden">
+    <div className="min-h-screen bg-transparent dark:bg-transparent text-slate-900 dark:text-slate-50 px-4 py-8 sm:px-6 lg:px-8 relative overflow-hidden">
       {/* Decorative Blobs */}
       <div className="pointer-events-none absolute inset-0 -z-10">
         <div className="absolute -top-16 -left-24 h-44 w-44 rounded-full bg-sky-300/30 blur-3xl dark:bg-sky-500/30" />
@@ -237,12 +236,15 @@ export default function AdminProductPage({ menuOpen = false }) {
 
       <div className={`relative z-10 transition-all duration-300 ${menuOpen ? "blur-sm scale-[0.98]" : ""}`}>
         {/* Title */}
-        <h1 className="text-2xl sm:text-3xl md:text-4xl font-semibold text-center text-slate-900 dark:text-slate-50 mb-8 sm:mb-10">
-          🛠️ Admin{" "}
-          <span className="bg-gradient-to-r from-sky-500 to-indigo-500 bg-clip-text text-transparent">
-            Product Management
+        <div className="flex flex-col items-center mb-8 sm:mb-10">
+          <span className="text-[10px] sm:text-xs font-bold uppercase tracking-[0.2em] text-rose-500 font-mono mb-2">
+            Admin Control
           </span>
-        </h1>
+          <h1 className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-center text-slate-900 dark:text-white font-display">
+            Product <span className="bg-gradient-to-r from-sky-400 to-indigo-500 bg-clip-text text-transparent">Management</span>
+          </h1>
+          <div className="h-0.5 w-12 bg-gradient-to-r from-sky-400 to-indigo-500 rounded-full mt-3.5" />
+        </div>
 
         {/* Error Message */}
         <AnimatePresence>
@@ -259,330 +261,328 @@ export default function AdminProductPage({ menuOpen = false }) {
         </AnimatePresence>
 
         {/* Products List */}
-       <div className="mb-10"> 
-  <h2 className="text-xl sm:text-2xl font-semibold mb-6 sm:mb-8 text-center text-slate-900 dark:text-slate-50">
-    📦{" "}
-    <span className="bg-gradient-to-r from-sky-500 to-indigo-500 bg-clip-text text-transparent">
-      All Products
-    </span>
-  </h2>
+        <div className="mb-10">
+          <h2 className="text-xl sm:text-2xl font-bold mb-6 sm:mb-8 text-center text-slate-900 dark:text-white font-display">
+            <span className="bg-gradient-to-r from-sky-400 to-indigo-500 bg-clip-text text-transparent">
+              All Products
+            </span>
+          </h2>
 
-  <div className="grid grid-cols-1 md:grid-cols-2 gap-5 sm:gap-6">
-    {products.map((product) => (
-      <motion.div
-        key={product._id}
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        whileHover={{ scale: 1.02 }}
-        className={`border border-slate-200 dark:border-slate-700 rounded-2xl p-4 sm:p-5 bg-white/95 dark:bg-slate-900/95 shadow-sm hover:shadow-md transition-all ${
-          editingId === product._id ? "ring-2 ring-sky-500 ring-offset-2" : ""
-        }`}
-      >
-        {/* MOBILE ONLY: Perfect left text + right photo */}
-        <div className="block md:hidden flex items-start gap-3 mb-3 p-2">
-          {/* Mobile: LEFT TEXT */}
-          <div className="flex-1 min-w-0 pr-2">
-            <h3 className="text-base font-semibold text-slate-900 dark:text-slate-50 mb-1 leading-tight line-clamp-2">
-              {product.name}
-            </h3>
-            {product.variant && (
-              <p className="text-xs font-medium text-sky-600 dark:text-sky-400 mb-1">
-                ({product.variant})
-              </p>
-            )}
-            <div className="text-xs text-slate-600 dark:text-slate-400 space-y-0.5">
-              <div>Total: <span className="font-semibold text-slate-900 dark:text-slate-50">{product.initialQuantity}</span></div>
-              <div>Available: <span className="font-semibold text-emerald-600 dark:text-emerald-400">{product.quantityAvailable ?? product.initialQuantity}</span></div>
-            </div>
-          </div>
-          
-          {/* Mobile: RIGHT PHOTO CIRCLE */}
-          <div className="flex-shrink-0 w-14 h-14">
-            <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              onClick={() => setEnlargedImage(product.photoUrl || `https://ui-avatars.com/api/?name=${product.name?.charAt(0)}&background=0ea5e9&color=fff&size=512`)}
-              className="w-full h-full rounded-full overflow-hidden border-2 border-sky-400 shadow-md hover:shadow-lg transition-all"
-            >
-              <img
-                src={product.photoUrl || `https://ui-avatars.com/api/?name=${product.name?.charAt(0)}&background=0ea5e9&color=fff&size=128`}
-                alt={product.name}
-                className="w-full h-full object-cover object-center rounded-full"
-              />
-            </motion.button>
-          </div>
-        </div>
-
-        {/* DESKTOP ONLY: ORIGINAL LAYOUT (md:hidden → hidden md:block) */}
-        <div className="hidden md:flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 mb-4">
-          <div className="flex-1 min-w-0">
-            <h3 className="text-base lg:text-lg font-semibold text-slate-900 dark:text-slate-50 truncate">
-              {product.name}
-            </h3>
-            {product.variant && (
-              <p className="text-[11px] lg:text-xs text-sky-600 dark:text-sky-400 font-medium mt-1">
-                ({product.variant})
-              </p>
-            )}
-            <div className="mt-2 text-[11px] lg:text-xs text-slate-600 dark:text-slate-400 space-y-0.5">
-              <div>Total: <span className="font-semibold">{product.initialQuantity}</span></div>
-              <div>Available: <span className="font-semibold">{product.quantityAvailable ?? product.initialQuantity}</span></div>
-            </div>
-          </div>
-
-          {/* Desktop: Image + Actions */}
-          <div className="flex flex-col items-end gap-3 lg:gap-4">
-            <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              onClick={() => setEnlargedImage(product.photoUrl || `https://ui-avatars.com/api/?name=${product.name?.charAt(0)}&background=0ea5e9&color=fff&size=512`)}
-              className="relative w-20 h-20 lg:w-24 lg:h-24 rounded-full overflow-hidden border-2 border-sky-400 shadow-sm hover:shadow-md transition-all"
-            >
-              <img
-                src={product.photoUrl || `https://ui-avatars.com/api/?name=${product.name?.charAt(0)}&background=0ea5e9&color=fff&size=128`}
-                alt={product.name}
-                className="w-full h-full object-cover object-center"
-              />
-            </motion.button>
-
-            <div className="flex gap-2 w-full justify-end">
-              <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                onClick={() => handleEdit(product)}
-                className="inline-flex items-center justify-center rounded-full border border-sky-200 dark:border-sky-500/60 bg-sky-50/70 dark:bg-sky-900/40 px-3 py-1.5 text-xs lg:text-sm text-sky-700 dark:text-sky-300 hover:bg-sky-100 dark:hover:bg-sky-800 transition shadow-sm hover:shadow-md"
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-5 sm:gap-6">
+            {products.map((product) => (
+              <motion.div
+                key={product._id}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                whileHover={{ scale: 1.02 }}
+                className={`backdrop-blur-xl bg-white/70 dark:bg-slate-900/30 border border-slate-200/50 dark:border-slate-800/40 rounded-2xl p-4 sm:p-5 shadow-sm hover:shadow-xl hover:-translate-y-1 hover:border-sky-500/20 dark:hover:border-sky-500/30 transition-all duration-300 ${editingId === product._id ? "ring-2 ring-sky-500 ring-offset-2" : ""
+                  }`}
               >
-                <FaEdit className="w-3.5 h-3.5" />
-                Edit
-              </motion.button>
-              <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                onClick={() => confirmDelete(product._id, product)}
-                className="inline-flex items-center justify-center rounded-full border border-rose-200 dark:border-rose-500/60 bg-rose-50/80 dark:bg-rose-900/40 px-3 py-1.5 text-xs lg:text-sm text-rose-700 dark:text-rose-300 hover:bg-rose-100 dark:hover:bg-rose-800 transition shadow-sm hover:shadow-md"
-              >
-                <FaTrashAlt className="w-3.5 h-3.5" />
-                Delete
-              </motion.button>
-            </div>
+                {/* MOBILE ONLY: Perfect left text + right photo */}
+                <div className="block md:hidden flex items-start gap-3 mb-3 p-2">
+                  {/* Mobile: LEFT TEXT */}
+                  <div className="flex-1 min-w-0 pr-2">
+                    <h3 className="text-base font-semibold text-slate-900 dark:text-slate-50 mb-1 leading-tight line-clamp-2">
+                      {product.name}
+                    </h3>
+                    {product.variant && (
+                      <p className="text-xs font-medium text-sky-600 dark:text-sky-400 mb-1">
+                        ({product.variant})
+                      </p>
+                    )}
+                    <div className="text-xs text-slate-600 dark:text-slate-400 space-y-0.5">
+                      <div>Total: <span className="font-semibold text-slate-900 dark:text-slate-50">{product.initialQuantity}</span></div>
+                      <div>Available: <span className="font-semibold text-emerald-600 dark:text-emerald-400">{product.quantityAvailable ?? product.initialQuantity}</span></div>
+                    </div>
+                  </div>
+
+                  {/* Mobile: RIGHT PHOTO CIRCLE */}
+                  <div className="flex-shrink-0 w-14 h-14">
+                    <motion.button
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                      onClick={() => setEnlargedImage(product.photoUrl || `https://ui-avatars.com/api/?name=${product.name?.charAt(0)}&background=0ea5e9&color=fff&size=512`)}
+                      className="w-full h-full rounded-full overflow-hidden border-2 border-sky-400 shadow-md hover:shadow-lg transition-all"
+                    >
+                      <img
+                        src={product.photoUrl || `https://ui-avatars.com/api/?name=${product.name?.charAt(0)}&background=0ea5e9&color=fff&size=128`}
+                        alt={product.name}
+                        className="w-full h-full object-cover object-center rounded-full"
+                      />
+                    </motion.button>
+                  </div>
+                </div>
+
+                {/* DESKTOP ONLY: ORIGINAL LAYOUT (md:hidden → hidden md:block) */}
+                <div className="hidden md:flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 mb-4">
+                  <div className="flex-1 min-w-0">
+                    <h3 className="text-base lg:text-lg font-semibold text-slate-900 dark:text-slate-50 truncate">
+                      {product.name}
+                    </h3>
+                    {product.variant && (
+                      <p className="text-[11px] lg:text-xs text-sky-600 dark:text-sky-400 font-medium mt-1">
+                        ({product.variant})
+                      </p>
+                    )}
+                    <div className="mt-2 text-[11px] lg:text-xs text-slate-600 dark:text-slate-400 space-y-0.5">
+                      <div>Total: <span className="font-semibold">{product.initialQuantity}</span></div>
+                      <div>Available: <span className="font-semibold">{product.quantityAvailable ?? product.initialQuantity}</span></div>
+                    </div>
+                  </div>
+
+                  {/* Desktop: Image + Actions */}
+                  <div className="flex flex-col items-end gap-3 lg:gap-4">
+                    <motion.button
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                      onClick={() => setEnlargedImage(product.photoUrl || `https://ui-avatars.com/api/?name=${product.name?.charAt(0)}&background=0ea5e9&color=fff&size=512`)}
+                      className="relative w-20 h-20 lg:w-24 lg:h-24 rounded-full overflow-hidden border-2 border-sky-400 shadow-sm hover:shadow-md transition-all"
+                    >
+                      <img
+                        src={product.photoUrl || `https://ui-avatars.com/api/?name=${product.name?.charAt(0)}&background=0ea5e9&color=fff&size=128`}
+                        alt={product.name}
+                        className="w-full h-full object-cover object-center"
+                      />
+                    </motion.button>
+
+                    <div className="flex gap-2 w-full justify-end">
+                      <motion.button
+                        whileHover={{ scale: 1.05 }}
+                        whileTap={{ scale: 0.95 }}
+                        onClick={() => handleEdit(product)}
+                        className="inline-flex items-center justify-center rounded-full border border-sky-200 dark:border-sky-500/60 bg-sky-50/70 dark:bg-sky-900/40 px-3 py-1.5 text-xs lg:text-sm text-sky-700 dark:text-sky-300 hover:bg-sky-100 dark:hover:bg-sky-800 transition shadow-sm hover:shadow-md"
+                      >
+                        <FaEdit className="w-3.5 h-3.5" />
+                        Edit
+                      </motion.button>
+                      <motion.button
+                        whileHover={{ scale: 1.05 }}
+                        whileTap={{ scale: 0.95 }}
+                        onClick={() => confirmDelete(product._id, product)}
+                        className="inline-flex items-center justify-center rounded-full border border-rose-200 dark:border-rose-500/60 bg-rose-50/80 dark:bg-rose-900/40 px-3 py-1.5 text-xs lg:text-sm text-rose-700 dark:text-rose-300 hover:bg-rose-100 dark:hover:bg-rose-800 transition shadow-sm hover:shadow-md"
+                      >
+                        <FaTrashAlt className="w-3.5 h-3.5" />
+                        Delete
+                      </motion.button>
+                    </div>
+                  </div>
+                </div>
+
+                {/* MOBILE ONLY: Buttons below photo */}
+                <div className="block md:hidden flex flex-col gap-2 mt-3 pt-2 border-t border-slate-100 dark:border-slate-700">
+                  <motion.button
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    onClick={() => handleEdit(product)}
+                    className="w-full inline-flex items-center justify-center gap-2 rounded-xl border border-sky-200 dark:border-sky-500/60 bg-sky-50/70 dark:bg-sky-900/40 px-4 py-2.5 text-sm font-medium text-sky-700 dark:text-sky-300 hover:bg-sky-100 dark:hover:bg-sky-800 transition-all shadow-sm hover:shadow-md h-11"
+                  >
+                    <FaEdit className="w-4 h-4" />
+                    Edit
+                  </motion.button>
+                  <motion.button
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    onClick={() => confirmDelete(product._id, product)}
+                    className="w-full inline-flex items-center justify-center gap-2 rounded-xl border border-rose-200 dark:border-rose-500/60 bg-rose-50/80 dark:bg-rose-900/40 px-4 py-2.5 text-sm font-medium text-rose-700 dark:text-rose-300 hover:bg-rose-100 dark:hover:bg-rose-800 transition-all shadow-sm hover:shadow-md h-11"
+                  >
+                    <FaTrashAlt className="w-4 h-4" />
+                    Delete
+                  </motion.button>
+                </div>
+              </motion.div>
+            ))}
           </div>
-        </div>
 
-        {/* MOBILE ONLY: Buttons below photo */}
-        <div className="block md:hidden flex flex-col gap-2 mt-3 pt-2 border-t border-slate-100 dark:border-slate-700">
-          <motion.button
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            onClick={() => handleEdit(product)}
-            className="w-full inline-flex items-center justify-center gap-2 rounded-xl border border-sky-200 dark:border-sky-500/60 bg-sky-50/70 dark:bg-sky-900/40 px-4 py-2.5 text-sm font-medium text-sky-700 dark:text-sky-300 hover:bg-sky-100 dark:hover:bg-sky-800 transition-all shadow-sm hover:shadow-md h-11"
-          >
-            <FaEdit className="w-4 h-4" />
-            Edit
-          </motion.button>
-          <motion.button
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            onClick={() => confirmDelete(product._id, product)}
-            className="w-full inline-flex items-center justify-center gap-2 rounded-xl border border-rose-200 dark:border-rose-500/60 bg-rose-50/80 dark:bg-rose-900/40 px-4 py-2.5 text-sm font-medium text-rose-700 dark:text-rose-300 hover:bg-rose-100 dark:hover:bg-rose-800 transition-all shadow-sm hover:shadow-md h-11"
-          >
-            <FaTrashAlt className="w-4 h-4" />
-            Delete
-          </motion.button>
+          {products.length === 0 && (
+            <div className="text-center py-12 text-slate-500 dark:text-slate-400">
+              <div className="w-24 h-24 mx-auto mb-4 bg-slate-200 dark:bg-slate-800 rounded-2xl flex items-center justify-center text-3xl">
+                📦
+              </div>
+              <p className="text-lg">No products found</p>
+            </div>
+          )}
         </div>
-      </motion.div>
-    ))}
-  </div>
-
-  {products.length === 0 && (
-    <div className="text-center py-12 text-slate-500 dark:text-slate-400">
-      <div className="w-24 h-24 mx-auto mb-4 bg-slate-200 dark:bg-slate-800 rounded-2xl flex items-center justify-center text-3xl">
-        📦
-      </div>
-      <p className="text-lg">No products found</p>
-    </div>
-  )}
-</div>
 
 
         {/* Form Section */}
-       <div className="w-full max-w-4xl mx-auto"> 
-  <h2 className="text-xl sm:text-2xl font-semibold mb-6 sm:mb-8 text-center text-slate-900 dark:text-slate-50">
-    {editingId ? "✏️" : "➕"}{" "}
-    <span className="bg-gradient-to-r from-sky-500 to-indigo-500 bg-clip-text text-transparent">
-      {editingId ? "Edit Product" : "Create New Product"}
-    </span>
-  </h2>
+        <div className="w-full max-w-4xl mx-auto">
+          <h2 className="text-xl sm:text-2xl font-semibold mb-6 sm:mb-8 text-center text-slate-900 dark:text-slate-50">
+            {editingId ? "✏️" : "➕"}{" "}
+            <span className="bg-gradient-to-r from-sky-500 to-indigo-500 bg-clip-text text-transparent">
+              {editingId ? "Edit Product" : "Create New Product"}
+            </span>
+          </h2>
 
-  <motion.form
-    initial={{ opacity: 0, y: 20 }}
-    animate={{ opacity: 1, y: 0 }}
-    onSubmit={handleSubmit}
-    className="w-full bg-white/95 dark:bg-slate-900/95 border border-slate-200 dark:border-slate-700 rounded-3xl p-4 sm:p-6 lg:p-8 shadow-xl space-y-6"
-  >
-    {/* Form fields - SAME AS BEFORE */}
-    <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6 lg:gap-8">
-      {/* LEFT: Form Fields - UNCHANGED */}
-      <div className="space-y-4 lg:space-y-5">
-        <div>
-          <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">
-            Product Name *
-          </label>
-          <input
-            type="text"
-            placeholder="Enter product name"
-            value={form.name}
-            onChange={(e) => setForm((prev) => ({ ...prev, name: e.target.value }))}
-            className="w-full px-4 py-3 bg-white/90 dark:bg-slate-800/90 border border-slate-200 dark:border-slate-700 rounded-xl text-sm focus:ring-2 focus:ring-sky-500/50 focus:border-sky-500 transition-all shadow-sm h-12"
-            required
-          />
-        </div>
-
-        <div>
-          <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">
-            Variant (Optional)
-          </label>
-          <input
-            type="text"
-            placeholder="Size, color, model, etc."
-            value={form.variant}
-            onChange={(e) => setForm((prev) => ({ ...prev, variant: e.target.value }))}
-            className="w-full px-4 py-3 bg-white/90 dark:bg-slate-800/90 border border-slate-200 dark:border-slate-700 rounded-xl text-sm focus:ring-2 focus:ring-sky-500/50 focus:border-sky-500 transition-all shadow-sm h-12"
-          />
-        </div>
-
-        <div>
-          <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2 flex items-center justify-between flex-wrap gap-2">
-            Total Quantity *
-            {editingOriginal && (
-              <label className="flex items-center gap-1 text-xs cursor-pointer">
-                <input
-                  type="checkbox"
-                  checked={restoreInitial}
-                  onChange={(e) => setRestoreInitial(e.target.checked)}
-                  className="w-4 h-4 accent-sky-500 rounded"
-                />
-                <span className="text-slate-500 dark:text-slate-400">Restore ({editingOriginal.initialQuantity})</span>
-              </label>
-            )}
-          </label>
-          <input
-            type="number"
-            min="0"
-            placeholder="0"
-            value={form.initialQuantity}
-            onChange={(e) => setForm((prev) => ({
-              ...prev,
-              initialQuantity: Math.max(0, Number(e.target.value))
-            }))}
-            className="w-full px-4 py-3 bg-white/90 dark:bg-slate-800/90 border border-slate-200 dark:border-slate-700 rounded-xl text-sm focus:ring-2 focus:ring-sky-500/50 focus:border-sky-500 transition-all shadow-sm h-12"
-            required
-          />
-        </div>
-
-        <div>
-          <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2 flex items-center justify-between flex-wrap gap-2">
-            Available Quantity *
-            {editingOriginal && (
-              <label className="flex items-center gap-1 text-xs cursor-pointer">
-                <input
-                  type="checkbox"
-                  checked={restoreAvailable}
-                  onChange={(e) => setRestoreAvailable(e.target.checked)}
-                  className="w-4 h-4 accent-sky-500 rounded"
-                />
-                <span className="text-slate-500 dark:text-slate-400">
-                  Restore ({editingOriginal.quantityAvailable ?? editingOriginal.initialQuantity})
-                </span>
-              </label>
-            )}
-          </label>
-          <input
-            type="number"
-            min="0"
-            placeholder="0"
-            value={form.quantityAvailable}
-            onChange={(e) => setForm((prev) => ({
-              ...prev,
-              quantityAvailable: Math.max(0, Number(e.target.value))
-            }))}
-            className="w-full px-4 py-3 bg-white/90 dark:bg-slate-800/90 border border-slate-200 dark:border-slate-700 rounded-xl text-sm focus:ring-2 focus:ring-sky-500/50 focus:border-sky-500 transition-all shadow-sm h-12"
-            required
-          />
-        </div>
-      </div>
-
-      {/* RIGHT: Image Upload - UNCHANGED */}
-      <div className="space-y-4 lg:space-y-5">
-        <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-4">
-          Product Image
-        </label>
-        <div className="relative">
-          <input
-            type="file"
-            accept="image/*"
-            onChange={(e) => {
-              const file = e.target.files?.[0] || null;
-              setPhotoFile(file);
-              if (file) {
-                setForm((prev) => ({ ...prev, photoUrl: "" }));
-              }
-            }}
-            className="absolute inset-0 w-full h-full opacity-0 cursor-pointer rounded-2xl"
-          />
-          <div className="w-full h-40 sm:h-48 lg:h-52 border-2 border-dashed border-slate-200 dark:border-slate-700 rounded-2xl bg-slate-50/70 dark:bg-slate-800/70 flex flex-col items-center justify-center hover:border-sky-400 hover:bg-sky-50/30 dark:hover:bg-sky-900/30 transition-all cursor-pointer p-6 shadow-sm hover:shadow-md">
-            {photoFile ? (
-              <div className="w-20 h-20 sm:w-24 sm:h-24 lg:w-28 lg:h-28 rounded-2xl overflow-hidden mx-auto shadow-lg ring-2 ring-sky-500/30">
-                <img src={URL.createObjectURL(photoFile)} alt="Preview" className="w-full h-full object-cover" />
-              </div>
-            ) : form.photoUrl ? (
-              <div className="w-20 h-20 sm:w-24 sm:h-24 lg:w-28 lg:h-28 rounded-2xl overflow-hidden mx-auto shadow-lg ring-2 ring-sky-500/30">
-                <img src={form.photoUrl} alt="Current" className="w-full h-full object-cover" />
-              </div>
-            ) : (
-              <>
-                <div className="w-14 h-14 sm:w-16 sm:h-16 bg-sky-500 rounded-2xl flex items-center justify-center mb-3 shadow-lg">
-                  <svg className="w-6 h-6 sm:w-7 sm:h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                  </svg>
+          <motion.form
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            onSubmit={handleSubmit}
+            className="w-full bg-white/95 dark:bg-slate-900/95 border border-slate-200 dark:border-slate-700 rounded-3xl p-4 sm:p-6 lg:p-8 shadow-xl space-y-6"
+          >
+            {/* Form fields - SAME AS BEFORE */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6 lg:gap-8">
+              {/* LEFT: Form Fields - UNCHANGED */}
+              <div className="space-y-4 lg:space-y-5">
+                <div>
+                  <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">
+                    Product Name *
+                  </label>
+                  <input
+                    type="text"
+                    placeholder="Enter product name"
+                    value={form.name}
+                    onChange={(e) => setForm((prev) => ({ ...prev, name: e.target.value }))}
+                    className="w-full px-4 py-3 bg-white/90 dark:bg-slate-800/90 border border-slate-200 dark:border-slate-700 rounded-xl text-sm focus:ring-2 focus:ring-sky-500/50 focus:border-sky-500 transition-all shadow-sm h-12"
+                    required
+                  />
                 </div>
-                <p className="text-sm font-medium text-slate-700 dark:text-slate-300 text-center mb-1">Click to upload product image</p>
-                <p className="text-xs text-slate-500 dark:text-slate-400">PNG, JPG up to 5MB</p>
-              </>
-            )}
-          </div>
+
+                <div>
+                  <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">
+                    Variant (Optional)
+                  </label>
+                  <input
+                    type="text"
+                    placeholder="Size, color, model, etc."
+                    value={form.variant}
+                    onChange={(e) => setForm((prev) => ({ ...prev, variant: e.target.value }))}
+                    className="w-full px-4 py-3 bg-white/90 dark:bg-slate-800/90 border border-slate-200 dark:border-slate-700 rounded-xl text-sm focus:ring-2 focus:ring-sky-500/50 focus:border-sky-500 transition-all shadow-sm h-12"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2 flex items-center justify-between flex-wrap gap-2">
+                    Total Quantity *
+                    {editingOriginal && (
+                      <label className="flex items-center gap-1 text-xs cursor-pointer">
+                        <input
+                          type="checkbox"
+                          checked={restoreInitial}
+                          onChange={(e) => setRestoreInitial(e.target.checked)}
+                          className="w-4 h-4 accent-sky-500 rounded"
+                        />
+                        <span className="text-slate-500 dark:text-slate-400">Restore ({editingOriginal.initialQuantity})</span>
+                      </label>
+                    )}
+                  </label>
+                  <input
+                    type="number"
+                    min="0"
+                    placeholder="0"
+                    value={form.initialQuantity}
+                    onChange={(e) => setForm((prev) => ({
+                      ...prev,
+                      initialQuantity: Math.max(0, Number(e.target.value))
+                    }))}
+                    className="w-full px-4 py-3 bg-white/90 dark:bg-slate-800/90 border border-slate-200 dark:border-slate-700 rounded-xl text-sm focus:ring-2 focus:ring-sky-500/50 focus:border-sky-500 transition-all shadow-sm h-12"
+                    required
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2 flex items-center justify-between flex-wrap gap-2">
+                    Available Quantity *
+                    {editingOriginal && (
+                      <label className="flex items-center gap-1 text-xs cursor-pointer">
+                        <input
+                          type="checkbox"
+                          checked={restoreAvailable}
+                          onChange={(e) => setRestoreAvailable(e.target.checked)}
+                          className="w-4 h-4 accent-sky-500 rounded"
+                        />
+                        <span className="text-slate-500 dark:text-slate-400">
+                          Restore ({editingOriginal.quantityAvailable ?? editingOriginal.initialQuantity})
+                        </span>
+                      </label>
+                    )}
+                  </label>
+                  <input
+                    type="number"
+                    min="0"
+                    placeholder="0"
+                    value={form.quantityAvailable}
+                    onChange={(e) => setForm((prev) => ({
+                      ...prev,
+                      quantityAvailable: Math.max(0, Number(e.target.value))
+                    }))}
+                    className="w-full px-4 py-3 bg-white/90 dark:bg-slate-800/90 border border-slate-200 dark:border-slate-700 rounded-xl text-sm focus:ring-2 focus:ring-sky-500/50 focus:border-sky-500 transition-all shadow-sm h-12"
+                    required
+                  />
+                </div>
+              </div>
+
+              {/* RIGHT: Image Upload - UNCHANGED */}
+              <div className="space-y-4 lg:space-y-5">
+                <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-4">
+                  Product Image
+                </label>
+                <div className="relative">
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={(e) => {
+                      const file = e.target.files?.[0] || null;
+                      setPhotoFile(file);
+                      if (file) {
+                        setForm((prev) => ({ ...prev, photoUrl: "" }));
+                      }
+                    }}
+                    className="absolute inset-0 w-full h-full opacity-0 cursor-pointer rounded-2xl"
+                  />
+                  <div className="w-full h-40 sm:h-48 lg:h-52 border-2 border-dashed border-slate-200 dark:border-slate-700 rounded-2xl bg-slate-50/70 dark:bg-slate-800/70 flex flex-col items-center justify-center hover:border-sky-400 hover:bg-sky-50/30 dark:hover:bg-sky-900/30 transition-all cursor-pointer p-6 shadow-sm hover:shadow-md">
+                    {photoFile ? (
+                      <div className="w-20 h-20 sm:w-24 sm:h-24 lg:w-28 lg:h-28 rounded-2xl overflow-hidden mx-auto shadow-lg ring-2 ring-sky-500/30">
+                        <img src={URL.createObjectURL(photoFile)} alt="Preview" className="w-full h-full object-cover" />
+                      </div>
+                    ) : form.photoUrl ? (
+                      <div className="w-20 h-20 sm:w-24 sm:h-24 lg:w-28 lg:h-28 rounded-2xl overflow-hidden mx-auto shadow-lg ring-2 ring-sky-500/30">
+                        <img src={form.photoUrl} alt="Current" className="w-full h-full object-cover" />
+                      </div>
+                    ) : (
+                      <>
+                        <div className="w-14 h-14 sm:w-16 sm:h-16 bg-sky-500 rounded-2xl flex items-center justify-center mb-3 shadow-lg">
+                          <svg className="w-6 h-6 sm:w-7 sm:h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                          </svg>
+                        </div>
+                        <p className="text-sm font-medium text-slate-700 dark:text-slate-300 text-center mb-1">Click to upload product image</p>
+                        <p className="text-xs text-slate-500 dark:text-slate-400">PNG, JPG up to 5MB</p>
+                      </>
+                    )}
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* SMALL ROUNDED CENTERED BUTTONS */}
+            {/* Replace ONLY the buttons section with this: */}
+
+            <div className="pt-6 border-t border-slate-200/50 dark:border-slate-700/50 px-4 sm:px-6">
+              <div className="flex flex-wrap justify-center gap-4 max-w-md mx-auto">
+                {editingId && (
+                  <button
+                    type="button"
+                    onClick={cancelEdit}
+                    className="px-8 py-3 rounded-3xl bg-slate-500 hover:bg-slate-600 text-white font-semibold text-sm shadow-xl hover:shadow-2xl transition-all border border-slate-400/30 whitespace-nowrap flex-1 sm:flex-none min-w-[120px] h-12"
+                  >
+                    ❌ Cancel
+                  </button>
+                )}
+                <button
+                  type="submit"
+                  disabled={loadingActions[editingId ? `edit-${editingId}` : "create"]}
+                  className="px-8 py-3 rounded-3xl bg-gradient-to-r from-sky-500 to-indigo-500 hover:from-sky-600 hover:to-indigo-600 text-white font-semibold text-sm shadow-2xl hover:shadow-3xl transition-all border border-sky-400/30 whitespace-nowrap flex-1 sm:flex-none min-w-[140px] h-12 disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {loadingActions[editingId ? `edit-${editingId}` : "create"]
+                    ? "Loading..."
+                    : editingId ? "✅ Update Product" : "➕ Create Product"
+                  }
+                </button>
+              </div>
+            </div>
+
+          </motion.form>
         </div>
-      </div>
-    </div>
-
-    {/* SMALL ROUNDED CENTERED BUTTONS */}
-   {/* Replace ONLY the buttons section with this: */}
-
-<div className="pt-6 border-t border-slate-200/50 dark:border-slate-700/50 px-4 sm:px-6">
-  <div className="flex flex-wrap justify-center gap-4 max-w-md mx-auto">
-    {editingId && (
-      <button
-        type="button"
-        onClick={cancelEdit}
-        className="px-8 py-3 rounded-3xl bg-slate-500 hover:bg-slate-600 text-white font-semibold text-sm shadow-xl hover:shadow-2xl transition-all border border-slate-400/30 whitespace-nowrap flex-1 sm:flex-none min-w-[120px] h-12"
-      >
-        ❌ Cancel
-      </button>
-    )}
-    <button
-      type="submit"
-      disabled={loadingActions[editingId ? `edit-${editingId}` : "create"]}
-      className="px-8 py-3 rounded-3xl bg-gradient-to-r from-sky-500 to-indigo-500 hover:from-sky-600 hover:to-indigo-600 text-white font-semibold text-sm shadow-2xl hover:shadow-3xl transition-all border border-sky-400/30 whitespace-nowrap flex-1 sm:flex-none min-w-[140px] h-12 disabled:opacity-50 disabled:cursor-not-allowed"
-    >
-      {loadingActions[editingId ? `edit-${editingId}` : "create"] 
-        ? "Loading..." 
-        : editingId ? "✅ Update Product" : "➕ Create Product"
-      }
-    </button>
-  </div>
-</div>
-
-  </motion.form>
-</div>
 
 
       </div>
@@ -670,7 +670,7 @@ export default function AdminProductPage({ menuOpen = false }) {
                   >
                     Cancel
                   </motion.button>
-                  
+
                   <ActionButton
                     label="🗑️ Delete Product"
                     color="bg-rose-600 hover:bg-rose-500"

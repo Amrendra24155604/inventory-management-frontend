@@ -4,14 +4,16 @@ function Footer() {
   const year = new Date().getFullYear();
 
   return (
-    <footer className=" border-t border-slate-200 bg-slate-50/95 dark:border-slate-800 dark:bg-slate-950/95">
+    <footer className="border-t border-slate-200 bg-slate-50 dark:border-slate-800 dark:bg-slate-950 mt-auto relative z-10">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           {/* Left: brand + copy */}
           <div className="flex items-center gap-3">
-            <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-sky-500 text-white text-sm font-semibold shadow-sm">
-              I
-            </div>
+            <img
+              src="/image.png"
+              alt="IoT Labs"
+              className="h-8 w-8 flex-shrink-0 rounded-full shadow-sm ring-1 ring-slate-200/50 dark:ring-slate-700/50 bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm"
+            />
             <div className="flex flex-col text-xs sm:text-sm text-slate-600 dark:text-slate-400">
               <span className="font-semibold text-slate-900 dark:text-slate-50">
                 InventoryPro • IOT Labs

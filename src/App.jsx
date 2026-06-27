@@ -18,6 +18,7 @@ import EmailVerified from "./components/EmailVerified/EmailVerified.jsx";
 import AdminBorrowApproval from "./components/BorrowApproval/BorrowApprovalPage.jsx";
 import BorrowList from "./components/UserBorrowList/UserBorrowList.jsx";
 import Inventory from "./components/Inventory/Inventory.jsx";
+import ShapeGrid from "./components/ShapeGrid/ShapeGrid.jsx";
 
 import {
   IconUsersGroup,
@@ -64,10 +65,17 @@ function AppShell({ user }) {
   }
 
   return (
-    <div className="min-h-screen bg-slate-50 text-slate-900 dark:bg-slate-950 dark:text-slate-100 transition-colors duration-300 flex flex-col">
+    <div className="min-h-screen bg-slate-50 text-slate-900 dark:bg-slate-950 dark:text-slate-100 transition-colors duration-300 flex flex-col relative z-0">
+      <ShapeGrid 
+        speed={0.5}
+        squareSize={40}
+        direction="diagonal"
+        hoverTrailAmount={0}
+        shape="square"
+      />
       {!hideChrome && <Header user={user} />}
 
-      <main className="flex-1">
+      <main className="flex-1 pt-16 pb-8">
         {loading ? (
           <ProcessingIcon />
         ) : (

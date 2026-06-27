@@ -71,8 +71,13 @@ function Register() {
       const data = await response.json();
 
       if (response.ok) {
+        const token = data.data?.accessToken || data.accessToken;
+        const refresh = data.data?.refreshToken || data.refreshToken;
+        if (token) localStorage.setItem("accessToken", token);
+        if (refresh) localStorage.setItem("refreshToken", refresh);
+        localStorage.setItem("loginExpiry", Date.now() + 90 * 24 * 60 * 60 * 1000);
         localStorage.setItem("justRegistered", "true");
-        navigate("/login");
+        window.location.href = "/";
       } else if (response.status === 409) {
         setErrorMessages([
           "Account already exists. Please log in instead.",
@@ -92,10 +97,9 @@ function Register() {
   };
 
   return (
-    <main className="min-h-screen w-full bg-slate-50 dark:bg-slate-950 flex items-center justify-center px-4">
+    <main className="min-h-screen w-full bg-transparent dark:bg-transparent flex items-center justify-center px-4">
       {/* same background style as Login / Landing */}
       <div className="fixed inset-0 -z-10">
-        <div className="absolute inset-0 bg-gradient-to-br from-slate-100 via-white to-slate-100 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950" />
         <div className="pointer-events-none absolute -top-24 -left-16 h-56 w-56 rounded-full bg-sky-400/20 blur-3xl dark:bg-sky-500/25" />
         <div className="pointer-events-none absolute bottom-[-72px] right-[-40px] h-56 w-56 rounded-full bg-indigo-400/20 blur-3xl dark:bg-indigo-500/25" />
       </div>
@@ -177,11 +181,10 @@ function Register() {
               type="button"
               onClick={handleRegister}
               disabled={loading}
-              className={`mt-1 w-full inline-flex items-center justify-center rounded-full px-4 py-2.5 text-sm font-semibold text-white shadow-md shadow-sky-500/30 transition ${
-                loading
-                  ? "bg-sky-400 cursor-wait opacity-80"
-                  : "bg-sky-500 hover:bg-sky-400"
-              }`}
+              className={`mt-1 w-full inline-flex items-center justify-center rounded-full px-4 py-2.5 text-sm font-semibold text-white shadow-md shadow-sky-500/30 transition ${loading
+                ? "bg-sky-400 cursor-wait opacity-80"
+                : "bg-sky-500 hover:bg-sky-400"
+                }`}
             >
               {loading ? "Creating account..." : "Create account"}
             </button>
@@ -201,11 +204,10 @@ function Register() {
               type="button"
               onClick={handleGoogleLogin}
               disabled={loading}
-              className={`w-full inline-flex items-center justify-center gap-2 rounded-full border border-slate-200 bg-white/90 px-4 py-2.5 text-sm font-medium text-slate-800 shadow-sm transition dark:bg-slate-900/70 dark:border-slate-700 dark:text-slate-50 ${
-                loading
-                  ? "opacity-60 cursor-wait"
-                  : "hover:bg-slate-50 dark:hover:bg-slate-800"
-              }`}
+              className={`w-full inline-flex items-center justify-center gap-2 rounded-full border border-slate-200 bg-white/90 px-4 py-2.5 text-sm font-medium text-slate-800 shadow-sm transition dark:bg-slate-900/70 dark:border-slate-700 dark:text-slate-50 ${loading
+                ? "opacity-60 cursor-wait"
+                : "hover:bg-slate-50 dark:hover:bg-slate-800"
+                }`}
             >
               <FcGoogle size={18} />
               <span>Sign up with Google</span>

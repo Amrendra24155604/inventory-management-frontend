@@ -27,7 +27,7 @@ function Teams() {
       .then((data) => {
         if (data.success) setTeams(data.teams);
       })
-      .catch(() => {});
+      .catch(() => { });
 
     fetch(`${API_PORT}/api/v1/auth/current-user`, {
       method: "POST",
@@ -37,35 +37,40 @@ function Teams() {
       .then((data) => {
         if (data.success) setUser(data.data);
       })
-      .catch(() => {});
+      .catch(() => { });
   }, [API_PORT]);
 
   return (
-    <main className="min-h-screen bg-slate-50 dark:bg-slate-950">
+    <main className="min-h-screen bg-transparent dark:bg-transparent">
       <div className="max-w-6xl mx-auto px-3 py-6 sm:px-4 sm:py-8 lg:px-8 overflow-hidden">
         <div className="relative">
           {/* soft gradient blobs – keep them inside, reduce size */}
           <div className="pointer-events-none absolute -top-16 -left-12 h-28 w-28 rounded-full bg-sky-300/30 blur-3xl dark:bg-sky-500/30" />
           <div className="pointer-events-none absolute -bottom-16 -right-12 h-32 w-32 rounded-full bg-indigo-300/30 blur-3xl dark:bg-indigo-600/30" />
 
-          <h2 className="relative text-xl sm:text-3xl md:text-4xl font-semibold text-center text-slate-900 dark:text-slate-50 mb-6 sm:mb-8">
-            Explore our{" "}
-            <span className="bg-gradient-to-r from-sky-500 to-indigo-500 bg-clip-text text-transparent">
-              teams
+          <div className="flex flex-col items-center mb-6 sm:mb-8">
+            <span className="text-[10px] sm:text-xs font-bold uppercase tracking-[0.2em] text-sky-500 font-mono mb-2">
+              Workspace Teams
             </span>
-          </h2>
+            <h2 className="relative text-2xl sm:text-3xl md:text-4xl font-extrabold text-center text-slate-900 dark:text-white font-display">
+              Explore our{" "}
+              <span className="bg-gradient-to-r from-sky-400 to-indigo-500 bg-clip-text text-transparent">
+                teams
+              </span>
+            </h2>
+            <div className="h-0.5 w-12 bg-gradient-to-r from-sky-400 to-indigo-500 rounded-full mt-3.5" />
+          </div>
 
           {/* domain chips */}
-          <div className="relative flex flex-wrap justify-center gap-2 sm:gap-3 mb-6 sm:mb-8">
+          <div className="relative flex flex-wrap justify-center gap-2 sm:gap-3 mb-8">
             {domainOptions.map((domain) => (
               <button
                 key={domain}
                 onClick={() => setSelectedTeam(domain)}
-                className={`px-3 sm:px-4 py-1.5 sm:py-2 rounded-full text-[11px] sm:text-sm font-medium transition-all ${
-                  selectedTeam === domain
-                    ? "bg-sky-500 text-white shadow-md"
-                    : "bg-white text-sky-700 border border-slate-200 hover:bg-sky-50 dark:bg-slate-900 dark:text-slate-100 dark:border-slate-700 dark:hover:bg-slate-800"
-                }`}
+                className={`px-4 py-2 rounded-full text-[11px] sm:text-sm font-semibold tracking-wide transition-all duration-300 hover:scale-[1.05] active:scale-95 shadow-sm ${selectedTeam === domain
+                  ? "bg-gradient-to-r from-sky-500 to-indigo-500 text-white shadow-lg shadow-sky-500/25"
+                  : "backdrop-blur-md bg-white/60 text-slate-700 border border-slate-200 hover:bg-sky-500/5 hover:border-sky-500/30 dark:bg-slate-900/40 dark:text-slate-200 dark:border-slate-800 dark:hover:bg-sky-500/10 dark:hover:border-sky-500/30"
+                  }`}
               >
                 {domain}
               </button>
@@ -73,17 +78,17 @@ function Teams() {
           </div>
 
           {selectedTeam && (
-            <section className="relative bg-white/95 dark:bg-slate-900/95 border border-slate-200 dark:border-slate-800 rounded-2xl sm:rounded-3xl shadow-sm px-3 py-5 sm:px-5 sm:py-7">
-              <h3 className="text-lg sm:text-2xl font-semibold text-center text-slate-900 dark:text-slate-50 mb-5 sm:mb-6">
-                {selectedTeam} team members
+            <section className="relative backdrop-blur-xl bg-white/70 dark:bg-slate-900/30 border border-slate-200/50 dark:border-slate-800/40 rounded-2xl sm:rounded-3xl shadow-xl px-4 py-6 sm:px-8 sm:py-8 transition-colors duration-500">
+              <h3 className="text-lg sm:text-2xl font-extrabold text-center text-slate-900 dark:text-white mb-6 font-display">
+                {selectedTeam} Members
               </h3>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
                 {(teams[selectedTeam] || []).map((member) => (
                   <Link
                     to={`/profile/${member.rollNumber}`}
                     key={member.rollNumber}
-                    className="group bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 p-3 sm:p-4 rounded-2xl shadow-sm hover:shadow-lg hover:-translate-y-1 transition flex items-center sm:flex-col sm:text-center gap-3"
+                    className="group backdrop-blur-md bg-white/40 dark:bg-slate-950/20 border border-slate-200/50 dark:border-slate-850/40 p-4 sm:p-5 rounded-2xl shadow-sm hover:shadow-xl hover:shadow-sky-500/5 hover:-translate-y-1.5 hover:border-sky-500/30 dark:hover:border-sky-500/30 transition-all duration-300 flex items-center sm:flex-col sm:text-center gap-4"
                   >
                     <div className="relative flex-shrink-0 w-14 h-14 sm:w-20 sm:h-20 mx-0 sm:mx-auto">
                       <img

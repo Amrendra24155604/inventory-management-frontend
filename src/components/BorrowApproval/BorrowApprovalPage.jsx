@@ -121,14 +121,17 @@ export default function AdminBorrowApproval() {
   });
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-50 px-4 py-8 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-transparent dark:bg-transparent text-slate-900 dark:text-slate-50 px-4 py-8 sm:px-6 lg:px-8">
       {/* title */}
-      <h2 className="relative text-2xl sm:text-3xl md:text-4xl font-semibold text-center text-slate-900 dark:text-slate-50 mb-8 sm:mb-10">
-        🛠️ Admin{" "}
-        <span className="bg-gradient-to-r from-sky-500 to-indigo-500 bg-clip-text text-transparent">
-          borrow approval
+      <div className="flex flex-col items-center mb-8 sm:mb-10">
+        <span className="text-[10px] sm:text-xs font-bold uppercase tracking-[0.2em] text-rose-500 font-mono mb-2">
+          Admin Control
         </span>
-      </h2>
+        <h2 className="relative text-2xl sm:text-3xl md:text-4xl font-extrabold text-center text-slate-900 dark:text-white font-display">
+          Borrow <span className="bg-gradient-to-r from-sky-400 to-indigo-500 bg-clip-text text-transparent">Approvals</span>
+        </h2>
+        <div className="h-0.5 w-12 bg-gradient-to-r from-sky-400 to-indigo-500 rounded-full mt-3.5" />
+      </div>
 
       {/* filters */}
       <div className="flex flex-wrap justify-center gap-2 sm:gap-3 mb-8 sm:mb-10">
@@ -138,11 +141,10 @@ export default function AdminBorrowApproval() {
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
             onClick={() => setSelectedStatus(status)}
-            className={`px-4 py-2 rounded-full font-medium text-xs sm:text-sm transition-all ${
-              selectedStatus === status
-                ? "bg-sky-500 text-white shadow-md"
-                : "bg-white text-sky-700 border border-slate-200 hover:bg-sky-50 dark:bg-slate-900 dark:text-slate-100 dark:border-slate-700 dark:hover:bg-slate-800"
-            }`}
+            className={`px-4 py-2 rounded-full text-xs sm:text-sm font-semibold tracking-wide transition-all duration-300 hover:scale-[1.05] active:scale-95 shadow-sm ${selectedStatus === status
+              ? "bg-gradient-to-r from-sky-500 to-indigo-500 text-white shadow-lg shadow-sky-500/25"
+              : "backdrop-blur-md bg-white/60 text-slate-700 border border-slate-200 hover:bg-sky-500/5 hover:border-sky-500/30 dark:bg-slate-900/40 dark:text-slate-200 dark:border-slate-800 dark:hover:bg-sky-500/10 dark:hover:bg-sky-500/30"
+              }`}
           >
             {status === "returned"
               ? "History"
@@ -158,8 +160,8 @@ export default function AdminBorrowApproval() {
             {selectedStatus === "return"
               ? "No return requests at the moment."
               : selectedStatus === "returned"
-              ? "No completed returns yet."
-              : `No ${selectedStatus} requests found.`}
+                ? "No completed returns yet."
+                : `No ${selectedStatus} requests found.`}
           </div>
         ) : (
           filteredRequests.map((req) => (
@@ -168,7 +170,7 @@ export default function AdminBorrowApproval() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.25, ease: "easeOut" }}
-              className="border border-slate-200 dark:border-slate-700 rounded-2xl p-4 sm:p-5 bg-white/95 dark:bg-slate-900/95 shadow-sm"
+              className="backdrop-blur-xl bg-white/70 dark:bg-slate-900/30 border border-slate-200/50 dark:border-slate-800/40 rounded-2xl p-5 sm:p-6 shadow-md hover:shadow-xl hover:scale-[1.01] hover:border-sky-500/20 dark:hover:border-sky-500/30 transition-all duration-300"
             >
               {/* top meta */}
               <div className="mb-2">
@@ -195,41 +197,39 @@ export default function AdminBorrowApproval() {
 
                 <div className="flex flex-wrap gap-2">
                   <span
-                    className={`inline-flex items-center justify-center px-3 py-1 rounded-full text-[11px] sm:text-xs font-semibold ${
-                      req.status === "pending"
-                        ? "bg-amber-100 text-amber-700 dark:bg-amber-800 dark:text-amber-100"
-                        : req.status === "approved"
+                    className={`inline-flex items-center justify-center px-3 py-1 rounded-full text-[11px] sm:text-xs font-semibold ${req.status === "pending"
+                      ? "bg-amber-100 text-amber-700 dark:bg-amber-800 dark:text-amber-100"
+                      : req.status === "approved"
                         ? "bg-emerald-100 text-emerald-700 dark:bg-emerald-800 dark:text-emerald-100"
                         : req.status === "declined"
-                        ? "bg-rose-100 text-rose-700 dark:bg-rose-800 dark:text-rose-100"
-                        : req.status === "on-hold"
-                        ? "bg-yellow-200 text-yellow-800 dark:bg-yellow-700 dark:text-yellow-100"
-                        : "bg-slate-200 text-slate-700 dark:bg-slate-700 dark:text-slate-100"
-                    }`}
+                          ? "bg-rose-100 text-rose-700 dark:bg-rose-800 dark:text-rose-100"
+                          : req.status === "on-hold"
+                            ? "bg-yellow-200 text-yellow-800 dark:bg-yellow-700 dark:text-yellow-100"
+                            : "bg-slate-200 text-slate-700 dark:bg-slate-700 dark:text-slate-100"
+                      }`}
                   >
                     {req.status === "approved"
                       ? "Borrow approved"
                       : req.status === "returned"
-                      ? "Returned"
-                      : req.status.charAt(0).toUpperCase() +
+                        ? "Returned"
+                        : req.status.charAt(0).toUpperCase() +
                         req.status.slice(1)}
                   </span>
 
                   {req.returnStatus !== "none" && (
                     <span
-                      className={`inline-flex items-center justify-center px-3 py-1 rounded-full text-[11px] sm:text-xs font-semibold ${
-                        req.returnStatus === "pending"
-                          ? "bg-amber-100 text-amber-700 dark:bg-amber-800 dark:text-amber-100"
-                          : req.returnStatus === "partial"
+                      className={`inline-flex items-center justify-center px-3 py-1 rounded-full text-[11px] sm:text-xs font-semibold ${req.returnStatus === "pending"
+                        ? "bg-amber-100 text-amber-700 dark:bg-amber-800 dark:text-amber-100"
+                        : req.returnStatus === "partial"
                           ? "bg-orange-100 text-orange-700 dark:bg-orange-800 dark:text-orange-100"
                           : "bg-sky-100 text-sky-700 dark:bg-sky-800 dark:text-sky-100"
-                      }`}
+                        }`}
                     >
                       {req.returnStatus === "pending"
                         ? "Return pending"
                         : req.returnStatus === "partial"
-                        ? "Returned (partial)"
-                        : "Return approved"}
+                          ? "Returned (partial)"
+                          : "Return approved"}
                     </span>
                   )}
                 </div>
@@ -390,9 +390,8 @@ function ActionButton({ label, color, loading, onClick }) {
       onClick={onClick}
       disabled={loading}
       whileTap={{ scale: 0.97 }}
-      className={`w-full sm:w-auto px-4 py-2 rounded-full shadow text-xs sm:text-sm font-semibold text-white flex items-center justify-center transition ${
-        loading ? "opacity-70 cursor-not-allowed" : ""
-      } ${color}`}
+      className={`w-full sm:w-auto px-4 py-2 rounded-full shadow text-xs sm:text-sm font-semibold text-white flex items-center justify-center transition ${loading ? "opacity-70 cursor-not-allowed" : ""
+        } ${color}`}
     >
       {loading ? (
         <>
@@ -404,21 +403,21 @@ function ActionButton({ label, color, loading, onClick }) {
       )}
     </motion.button>
   );
-  {/* Borrow Success Toast */}
-<AnimatePresence>
-  {borrowMessage && (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, y: 20 }}
-      transition={{ duration: 0.3 }}
-      className="fixed bottom-5 inset-x-0 flex justify-center z-[999]"
-    >
-      <div className="bg-sky-500/90 backdrop-blur-sm text-white px-6 py-3 rounded-2xl shadow-xl text-sm sm:text-base text-center max-w-[90vw] border border-sky-300/50">
-        {borrowMessage}
-      </div>
-    </motion.div>
-  )}
-</AnimatePresence>
+  {/* Borrow Success Toast */ }
+  <AnimatePresence>
+    {borrowMessage && (
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        exit={{ opacity: 0, y: 20 }}
+        transition={{ duration: 0.3 }}
+        className="fixed bottom-5 inset-x-0 flex justify-center z-[999]"
+      >
+        <div className="bg-sky-500/90 backdrop-blur-sm text-white px-6 py-3 rounded-2xl shadow-xl text-sm sm:text-base text-center max-w-[90vw] border border-sky-300/50">
+          {borrowMessage}
+        </div>
+      </motion.div>
+    )}
+  </AnimatePresence>
 
 }

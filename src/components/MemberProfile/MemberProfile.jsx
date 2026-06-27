@@ -57,12 +57,11 @@ function MemberProfile() {
   const avatarUrl =
     user.photoUrl ||
     user.avatarUrl ||
-    `https://ui-avatars.com/api/?name=${
-      user.username?.charAt(0) || "U"
+    `https://ui-avatars.com/api/?name=${user.username?.charAt(0) || "U"
     }&background=0ea5e9&color=fff`;
 
   return (
-    <main className="min-h-screen bg-slate-50 dark:bg-slate-950 overflow-x-hidden">
+    <main className="min-h-screen bg-transparent dark:bg-transparent overflow-x-hidden">
       <div className="w-full max-w-xl mx-auto px-4 py-8 sm:px-6 lg:px-8">
         <div className="relative">
           {/* blobs shrunk & kept inside */}
