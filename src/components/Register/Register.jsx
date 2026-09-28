@@ -73,8 +73,10 @@ function Register() {
       if (response.ok) {
         const token = data.data?.accessToken || data.accessToken;
         const refresh = data.data?.refreshToken || data.refreshToken;
+        const regUser = data.data?.user || data.user;
         if (token) localStorage.setItem("accessToken", token);
         if (refresh) localStorage.setItem("refreshToken", refresh);
+        if (regUser) localStorage.setItem("cachedUser", JSON.stringify(regUser));
         localStorage.setItem("loginExpiry", Date.now() + 90 * 24 * 60 * 60 * 1000);
         localStorage.setItem("justRegistered", "true");
         window.location.href = "/";

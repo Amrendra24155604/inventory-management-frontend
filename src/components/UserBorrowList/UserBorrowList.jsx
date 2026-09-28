@@ -1,5 +1,11 @@
 import { useEffect, useState } from "react";
-import { FaUndo } from "react-icons/fa";
+import {
+  FaUndo,
+  FaCheckCircle,
+  FaClock,
+  FaTimesCircle,
+  FaPauseCircle,
+} from "react-icons/fa";
 import { motion, AnimatePresence } from "framer-motion";
 
 export default function BorrowList() {
@@ -11,12 +17,20 @@ export default function BorrowList() {
   const API_PORT = import.meta.env.VITE_API_PORT;
 
   const statusOptions = ["approved", "pending", "returned", "declined", "onHold"];
+  const statusIcons = {
+    approved: <FaCheckCircle className="text-white text-xs sm:text-sm" />,
+    pending: <FaClock className="text-white text-xs sm:text-sm" />,
+    returned: <FaUndo className="text-white text-xs sm:text-sm" />,
+    declined: <FaTimesCircle className="text-white text-xs sm:text-sm" />,
+    onHold: <FaPauseCircle className="text-white text-xs sm:text-sm" />,
+  };
+
   const statusLabels = {
-    approved: "🟢 Approved",
-    pending: "🟡 Pending",
-    returned: "✅ Returned",
-    declined: "❌ Declined",
-    onHold: "⏸️ On Hold",
+    approved: "Approved",
+    pending: "Pending",
+    returned: "Returned",
+    declined: "Declined",
+    onHold: "On Hold",
   };
 
   useEffect(() => {
@@ -128,12 +142,15 @@ export default function BorrowList() {
           <button
             key={status}
             onClick={() => setSelectedStatus(status)}
-            className={`px-4 py-2 rounded-full text-xs sm:text-sm font-semibold tracking-wide transition-all duration-300 hover:scale-[1.05] active:scale-95 shadow-sm ${selectedStatus === status
+            className={`px-4 py-2 rounded-full text-xs sm:text-sm font-semibold tracking-wide transition-all duration-300 hover:scale-[1.05] active:scale-95 shadow-sm inline-flex items-center gap-2 ${selectedStatus === status
               ? "bg-gradient-to-r from-sky-500 to-indigo-500 text-white shadow-lg shadow-sky-500/25"
-              : "backdrop-blur-md bg-white/60 text-slate-700 border border-slate-200 hover:bg-sky-500/5 hover:border-sky-500/30 dark:bg-slate-900/40 dark:text-slate-200 dark:border-slate-800 dark:hover:bg-sky-500/10 dark:hover:border-sky-500/30"
+              : "backdrop-blur-md bg-slate-900/80 text-white border border-slate-700/80 hover:bg-slate-800 dark:bg-slate-900/80 dark:text-white dark:border-slate-800"
               }`}
           >
-            {statusLabels[status]}
+            <span className="p-1 rounded-full bg-white/20 text-white flex items-center justify-center">
+              {statusIcons[status]}
+            </span>
+            <span>{statusLabels[status]}</span>
           </button>
         ))}
       </div>
@@ -180,8 +197,8 @@ export default function BorrowList() {
                   <span className="font-semibold">Expiry:</span>{" "}
                   {new Date(req.expiry).toLocaleDateString()}
                   {new Date(req.expiry) < new Date() && (
-                    <span className="text-[11px] font-semibold text-rose-600 bg-rose-100 dark:bg-rose-800 dark:text-rose-100 px-2 py-0.5 rounded-full">
-                      ⏰ Expired
+                    <span className="text-[11px] font-semibold text-white bg-rose-600 px-2 py-0.5 rounded-full inline-flex items-center gap-1">
+                      <FaClock className="text-white text-xs" /> Expired
                     </span>
                   )}
                 </p>

@@ -389,7 +389,7 @@
 
 // export default LandingPage;
 import { motion, useScroll, useTransform } from "framer-motion";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import Home from "../Home/Home.jsx";
 import About from "../About/About.jsx";
 import Contact from "../Contact/Contact.jsx";
@@ -397,7 +397,17 @@ import More from "../more/more.jsx";
 
 function LandingPage() {
   const { scrollYProgress } = useScroll();
-  const bgY = useTransform(scrollYProgress, [0, 1], [0, -60]);
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkMobile = () => setIsMobile(window.innerWidth < 768);
+    checkMobile();
+    window.addEventListener("resize", checkMobile);
+    return () => window.removeEventListener("resize", checkMobile);
+  }, []);
+
+  const rawBgY = useTransform(scrollYProgress, [0, 1], [0, -60]);
+  const bgY = isMobile ? 0 : rawBgY;
 
   useEffect(() => {
     document.documentElement.style.scrollBehavior = "smooth";
@@ -417,13 +427,13 @@ function LandingPage() {
   return (
     <main className="min-h-screen w-full bg-transparent dark:bg-transparent text-slate-900 dark:text-slate-100 relative overflow-hidden transition-colors duration-500">
       {/* Background */}
-      <motion.div className="fixed inset-0 -z-20" style={{ y: bgY }}>
+      <motion.div className="fixed inset-0 -z-20 transform-gpu will-change-transform" style={{ y: bgY }}>
         <div className="absolute inset-0 bg-gradient-to-br from-slate-50 via-white to-slate-50 dark:from-[#030712] dark:via-[#0a0f1d] dark:to-[#030712]" />
 
-        {/* Soft floating neon blobs */}
-        <div className="pointer-events-none absolute -top-48 -left-32 h-[450px] w-[450px] rounded-full bg-sky-400/20 blur-3xl dark:bg-sky-500/10 animate-pulse-glow" style={{ animationDuration: '8s' }} />
-        <div className="pointer-events-none absolute bottom-[-150px] right-[-100px] h-[550px] w-[550px] rounded-full bg-indigo-400/20 blur-3xl dark:bg-indigo-500/10 animate-pulse-glow" style={{ animationDuration: '12s' }} />
-        <div className="pointer-events-none absolute top-1/2 left-1/3 h-[350px] w-[350px] rounded-full bg-purple-400/10 blur-3xl dark:bg-purple-500/5 animate-pulse-glow" style={{ animationDuration: '10s' }} />
+        {/* Soft floating neon blobs with GPU acceleration */}
+        <div className="pointer-events-none absolute -top-48 -left-32 h-[300px] w-[300px] sm:h-[450px] sm:w-[450px] rounded-full bg-sky-400/20 blur-2xl sm:blur-3xl dark:bg-sky-500/10 animate-pulse-glow transform-gpu will-change-transform" style={{ animationDuration: '8s' }} />
+        <div className="pointer-events-none absolute bottom-[-150px] right-[-100px] h-[350px] w-[350px] sm:h-[550px] sm:w-[550px] rounded-full bg-indigo-400/20 blur-2xl sm:blur-3xl dark:bg-indigo-500/10 animate-pulse-glow transform-gpu will-change-transform" style={{ animationDuration: '12s' }} />
+        <div className="pointer-events-none absolute top-1/2 left-1/3 h-[250px] w-[250px] sm:h-[350px] sm:w-[350px] rounded-full bg-purple-400/10 blur-2xl sm:blur-3xl dark:bg-purple-500/5 animate-pulse-glow transform-gpu will-change-transform" style={{ animationDuration: '10s' }} />
       </motion.div>
 
       {/* Scroll progress */}

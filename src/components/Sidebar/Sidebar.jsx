@@ -10,6 +10,7 @@ import {
   FaExclamationTriangle,
   FaUser, // Added for profile icon
 } from "react-icons/fa";
+import { clearAuthData } from "../../utils/auth.js";
 
 function Sidebar({ isOpen, onClose, user, activeSection, onNavClick }) {
   const API_PORT = import.meta.env.VITE_API_PORT;
@@ -54,18 +55,15 @@ function Sidebar({ isOpen, onClose, user, activeSection, onNavClick }) {
 
   const handleLogout = async () => {
     try {
-      const res = await fetch(`${API_PORT}/api/v1/auth/logout`, {
+      await fetch(`${API_PORT}/api/v1/auth/logout`, {
         method: "POST",
         credentials: "include",
       });
-      if (res.ok) {
-        localStorage.removeItem("justRegistered");
-        window.location.href = "/login";
-      } else {
-        console.error("Logout failed");
-      }
     } catch (err) {
       console.error("Error during logout:", err);
+    } finally {
+      clearAuthData();
+      window.location.href = "/login";
     }
   };
 

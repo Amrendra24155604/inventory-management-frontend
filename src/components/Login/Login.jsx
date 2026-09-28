@@ -33,11 +33,11 @@ function Login() {
       console.log(data);
 
       if (response.ok) {
-
-        // Store tokens (they're in response body)
-        localStorage.setItem('accessToken', data.accessToken);
-        localStorage.setItem('refreshToken', data.refreshToken);
-        localStorage.setItem('loginExpiry', Date.now() + 90 * 24 * 60 * 60 * 1000);
+        const payload = data.data || data;
+        if (payload.accessToken) localStorage.setItem("accessToken", payload.accessToken);
+        if (payload.refreshToken) localStorage.setItem("refreshToken", payload.refreshToken);
+        if (payload.user) localStorage.setItem("cachedUser", JSON.stringify(payload.user));
+        localStorage.setItem("loginExpiry", Date.now() + 90 * 24 * 60 * 60 * 1000);
         localStorage.setItem("justLoggedIn", "true");
         window.location.href = "/";
       } else {
@@ -70,6 +70,12 @@ function Login() {
       const result = await response.json();
 
       if (response.status === 200 || response.status === 201) {
+        const payload = result.data || result;
+        if (payload.accessToken) localStorage.setItem("accessToken", payload.accessToken);
+        if (payload.refreshToken) localStorage.setItem("refreshToken", payload.refreshToken);
+        if (payload.user) localStorage.setItem("cachedUser", JSON.stringify(payload.user));
+        localStorage.setItem("loginExpiry", Date.now() + 90 * 24 * 60 * 60 * 1000);
+        localStorage.setItem("justLoggedIn", "true");
         window.location.href = "/";
       } else {
         const messages = Array.isArray(result.errors)

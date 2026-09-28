@@ -219,7 +219,18 @@ const ShapeGrid = ({
       ctx.fillRect(0, 0, canvas.width, canvas.height);
     };
 
-    const updateAnimation = () => {
+    let lastTime = performance.now();
+
+    const updateAnimation = (now) => {
+      requestRef.current = requestAnimationFrame(updateAnimation);
+
+      const isMobile = window.innerWidth < 768;
+      const fpsInterval = isMobile ? 1000 / 30 : 1000 / 60;
+      const elapsed = (now || performance.now()) - lastTime;
+
+      if (elapsed < fpsInterval) return;
+      lastTime = (now || performance.now()) - (elapsed % fpsInterval);
+
       const effectiveSpeed = Math.max(speed, 0.1);
       const wrapX = isHex ? hexHoriz * 2 : squareSize;
       const wrapY = isHex ? hexVert : isTri ? squareSize * 2 : squareSize;
@@ -247,7 +258,6 @@ const ShapeGrid = ({
 
       updateCellOpacities();
       drawGrid();
-      requestRef.current = requestAnimationFrame(updateAnimation);
     };
 
     const updateCellOpacities = () => {

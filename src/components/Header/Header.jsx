@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { FaBookOpen } from "react-icons/fa";
+import { FaBookOpen, FaSun, FaMoon } from "react-icons/fa";
 import { RxHamburgerMenu } from "react-icons/rx";
 import { useNavigate, useLocation } from "react-router-dom";
 import Sidebar from "../Sidebar/Sidebar";
@@ -124,10 +124,14 @@ function Header({ user }) {
           <div className="flex items-center gap-2 sm:gap-3 flex-shrink-0">
             <button
               onClick={toggleTheme}
-              className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-slate-200 bg-white text-slate-700 shadow-sm hover:scale-105 hover:shadow-md transition-all dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200"
+              className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-slate-700/80 bg-slate-900 text-white shadow-sm hover:scale-105 hover:bg-slate-800 transition-all dark:border-slate-700 dark:bg-slate-800 dark:text-white"
               aria-label="Toggle theme"
             >
-              <span className="text-base">{darkMode ? "🌙" : "☀️"}</span>
+              {darkMode ? (
+                <FaSun className="text-white text-sm" />
+              ) : (
+                <FaMoon className="text-white text-sm" />
+              )}
             </button>
 
             {isLoggedIn ? (

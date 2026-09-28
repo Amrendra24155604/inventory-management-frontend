@@ -1,5 +1,14 @@
 import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
+import {
+  FaClock,
+  FaCheckCircle,
+  FaTimesCircle,
+  FaPauseCircle,
+  FaHistory,
+  FaExchangeAlt,
+  FaExclamationTriangle,
+} from "react-icons/fa";
 
 const statusOptions = [
   "pending",
@@ -10,6 +19,26 @@ const statusOptions = [
   "return",
   "expired",
 ];
+
+const statusIcons = {
+  pending: <FaClock className="text-white text-xs sm:text-sm" />,
+  approved: <FaCheckCircle className="text-white text-xs sm:text-sm" />,
+  declined: <FaTimesCircle className="text-white text-xs sm:text-sm" />,
+  "on-hold": <FaPauseCircle className="text-white text-xs sm:text-sm" />,
+  returned: <FaHistory className="text-white text-xs sm:text-sm" />,
+  return: <FaExchangeAlt className="text-white text-xs sm:text-sm" />,
+  expired: <FaExclamationTriangle className="text-white text-xs sm:text-sm" />,
+};
+
+const statusLabels = {
+  pending: "Pending",
+  approved: "Approved",
+  declined: "Declined",
+  "on-hold": "On-Hold",
+  returned: "History",
+  return: "Returns",
+  expired: "Expired",
+};
 
 export default function AdminBorrowApproval() {
   const API_PORT = import.meta.env.VITE_API_PORT;
@@ -141,14 +170,15 @@ export default function AdminBorrowApproval() {
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
             onClick={() => setSelectedStatus(status)}
-            className={`px-4 py-2 rounded-full text-xs sm:text-sm font-semibold tracking-wide transition-all duration-300 hover:scale-[1.05] active:scale-95 shadow-sm ${selectedStatus === status
+            className={`px-4 py-2 rounded-full text-xs sm:text-sm font-semibold tracking-wide transition-all duration-300 hover:scale-[1.05] active:scale-95 shadow-sm inline-flex items-center gap-2 ${selectedStatus === status
               ? "bg-gradient-to-r from-sky-500 to-indigo-500 text-white shadow-lg shadow-sky-500/25"
-              : "backdrop-blur-md bg-white/60 text-slate-700 border border-slate-200 hover:bg-sky-500/5 hover:border-sky-500/30 dark:bg-slate-900/40 dark:text-slate-200 dark:border-slate-800 dark:hover:bg-sky-500/10 dark:hover:bg-sky-500/30"
+              : "backdrop-blur-md bg-slate-900/80 text-white border border-slate-700/80 hover:bg-slate-800 dark:bg-slate-900/80 dark:text-white dark:border-slate-800"
               }`}
           >
-            {status === "returned"
-              ? "History"
-              : status.charAt(0).toUpperCase() + status.slice(1)}
+            <span className="p-1 rounded-full bg-white/20 text-white flex items-center justify-center">
+              {statusIcons[status]}
+            </span>
+            <span>{statusLabels[status]}</span>
           </motion.button>
         ))}
       </div>

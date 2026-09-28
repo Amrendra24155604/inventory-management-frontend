@@ -28,17 +28,10 @@ import {
 } from "@tabler/icons-react";
 import { MdApproval } from "react-icons/md";
 import { ThemeProvider } from "./context/ThemeContext.jsx";
+import { getCachedUser, fetchCurrentUser } from "./utils/auth.js";
 
 function AppShell({ user }) {
   const location = useLocation();
-  const [loading, setLoading] = useState(false);
-
-  // route‑change loading (ignore hash)
-  useEffect(() => {
-    setLoading(true);
-    const timer = setTimeout(() => setLoading(false), 800);
-    return () => clearTimeout(timer);
-  }, [location.pathname]);
 
   const excludedPaths = ["/login", "/register"];
   const hideChrome = excludedPaths.includes(location.pathname);
@@ -76,56 +69,42 @@ function AppShell({ user }) {
       {!hideChrome && <Header user={user} />}
 
       <main className="flex-1 pt-16 pb-8">
-        {loading ? (
-          <ProcessingIcon />
-        ) : (
-          <Routes>
-            <Route path="/" element={<LandingPage />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/register" element={<Register />} />
-            <Route path="/profile" element={<CompleteProfile />} />
-            <Route path="/teams" element={<Teams />} />
-            <Route path="/profile/:rollNumber" element={<MemberProfile />} />
-            <Route path="/admin/requests" element={<AdminRequestPage />} />
-            <Route path="/admin/products" element={<AdminProductPage />} />
-            <Route path="/borrow" element={<BorrowList />} />
-            <Route path="/inventory" element={<Inventory />} />
-            <Route path="/borrow-approval" element={<AdminBorrowApproval />} />
-            <Route path="/verify-email" element={<VerifyEmail />} />
-            <Route
-              path="/email-verified/:verificationToken"
-              element={<EmailVerified />}
-            />
-          </Routes>
-        )}
+        <Routes>
+          <Route path="/" element={<LandingPage />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
+          <Route path="/profile" element={<CompleteProfile />} />
+          <Route path="/teams" element={<Teams />} />
+          <Route path="/profile/:rollNumber" element={<MemberProfile />} />
+          <Route path="/admin/requests" element={<AdminRequestPage />} />
+          <Route path="/admin/products" element={<AdminProductPage />} />
+          <Route path="/borrow" element={<BorrowList />} />
+          <Route path="/inventory" element={<Inventory />} />
+          <Route path="/borrow-approval" element={<AdminBorrowApproval />} />
+          <Route path="/verify-email" element={<VerifyEmail />} />
+          <Route
+            path="/email-verified/:verificationToken"
+            element={<EmailVerified />}
+          />
+        </Routes>
       </main>
 
-      {!hideChrome && !loading && <FloatingDock items={dockItems} />}
+      {!hideChrome && <FloatingDock items={dockItems} />}
       {!hideChrome && <Footer />}
     </div>
   );
 }
 
 function App() {
-  const [user, setUser] = useState(null);
-  const API_PORT = import.meta.env.VITE_API_PORT;
+  const [user, setUser] = useState(getCachedUser);
 
   useEffect(() => {
-    const fetchUser = async () => {
-      try {
-        const res = await fetch(`${API_PORT}/api/v1/auth/current-user`, {
-          method: "POST",
-          credentials: "include",
-        });
-        if (!res.ok) throw new Error("Unauthorized");
-        const data = await res.json();
-        setUser(data.data);
-      } catch {
-        setUser(null);
-      }
+    const loadUser = async () => {
+      const currentUser = await fetchCurrentUser();
+      setUser(currentUser);
     };
-    fetchUser();
-  }, [API_PORT]);
+    loadUser();
+  }, []);
 
   return (
     <ThemeProvider>

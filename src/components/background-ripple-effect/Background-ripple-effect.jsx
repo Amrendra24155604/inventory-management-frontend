@@ -4,6 +4,8 @@ import React, { useMemo, useRef, useState } from "react";
 import { cn } from "../../lib/utils.js";
 import { useTheme } from "../../context/ThemeContext.jsx";
 
+import { FaSun, FaMoon } from "react-icons/fa";
+
 const BackgroundRippleEffect = ({ rows = 8, cols = 27, cellSize = 56 }) => {
   const [clickedCell, setClickedCell] = useState(null);
   const [rippleKey, setRippleKey] = useState(0);
@@ -22,9 +24,14 @@ const BackgroundRippleEffect = ({ rows = 8, cols = 27, cellSize = 56 }) => {
       <div className="absolute top-4 right-4 z-10">
         <button
           onClick={toggleTheme}
-          className="px-4 py-2 rounded-full bg-indigo-600 text-white font-medium hover:bg-indigo-700 transition"
+          className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-indigo-600 text-white font-medium hover:bg-indigo-700 transition"
         >
-          Toggle {theme === "light" ? "Dark" : "Light"} Mode
+          {theme === "light" ? (
+            <FaMoon className="text-white text-sm" />
+          ) : (
+            <FaSun className="text-white text-sm" />
+          )}
+          <span>Toggle {theme === "light" ? "Dark" : "Light"} Mode</span>
         </button>
       </div>
 
