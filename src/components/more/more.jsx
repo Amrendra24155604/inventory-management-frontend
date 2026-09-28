@@ -34,7 +34,7 @@ function More() {
           className="text-center mb-10 sm:mb-12"
           initial={{ opacity: 0, y: 18 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ margin: "-20% 0px -10%", once: false }}
+          viewport={{ margin: "0px 0px -40px 0px", amount: 0.15, once: false }}
           transition={{ duration: 0.45 }}
         >
           <p className="text-[11px] font-semibold uppercase tracking-[0.24em] text-sky-500">
@@ -61,7 +61,7 @@ function More() {
               className="flex flex-col justify-between rounded-2xl border border-slate-200 bg-white/95 px-5 py-6 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all dark:border-slate-800 dark:bg-slate-900/90"
               initial={{ opacity: 0, y: 24 }}
               whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ margin: "-20% 0px -10%", once: false }}
+              viewport={{ margin: "0px 0px -40px 0px", amount: 0.15, once: false }}
               transition={{ duration: 0.45, delay: 0.08 * idx }}
             >
               <div>
@@ -89,7 +89,7 @@ function More() {
           className="mt-10 sm:mt-12 rounded-2xl border border-slate-200 bg-white/90 px-4 py-5 shadow-sm flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between dark:border-slate-800 dark:bg-slate-900/90"
           initial={{ opacity: 0, y: 18 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ margin: "-20% 0px -10%", once: false }}
+          viewport={{ margin: "0px 0px -40px 0px", amount: 0.15, once: false }}
           transition={{ duration: 0.45 }}
         >
           <div className="text-sm font-medium text-slate-800 dark:text-slate-100">

@@ -144,7 +144,7 @@ function Home() {
         className="rounded-3xl backdrop-blur-xl bg-white/70 dark:bg-slate-900/30 border border-slate-200/60 dark:border-slate-800/40 shadow-xl shadow-slate-900/5 px-6 py-9 sm:px-10 sm:py-12"
         initial={{ opacity: 0, y: 30, scale: 0.98 }}
         whileInView={{ opacity: 1, y: 0, scale: 1 }}
-        viewport={{ margin: "-20% 0px -10%", once: false }}
+        viewport={{ margin: "0px 0px -40px 0px", amount: 0.15, once: false }}
         transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
       >
         <div className="inline-flex items-center gap-2 rounded-full px-3 py-1 bg-sky-500/10 text-sky-600 border border-sky-500/20 text-[11px] font-bold tracking-[0.18em] uppercase dark:bg-sky-500/10 dark:text-sky-300 dark:border-sky-500/30">
@@ -210,10 +210,10 @@ function Home() {
           {featureCards.map(({ icon: Icon, title, desc }) => (
             <motion.div
               key={title}
-              className="rounded-2xl backdrop-blur-xl bg-white/60 dark:bg-slate-900/20 border border-slate-200/50 dark:border-slate-800/40 px-5 py-6 shadow-sm hover:shadow-lg hover:-translate-y-1 hover:scale-[1.02] hover:border-sky-500/20 dark:hover:border-sky-500/30 transition-all duration-300"
+              className="rounded-2xl backdrop-blur-xl bg-white/60 dark:bg-slate-900/20 border border-slate-200/50 dark:border-slate-800/40 px-5 py-6 shadow-sm hover:shadow-lg hover:-translate-y-1 hover:scale-[1.02] hover:border-sky-500/20 dark:hover:border-sky-500/30 transition-shadow transition-colors duration-300"
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ margin: "-20% 0px -10%", once: false }}
+              viewport={{ margin: "0px 0px -40px 0px", amount: 0.15, once: false }}
               transition={{ duration: 0.4 }}
             >
               <div className="mb-4 inline-flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-sky-500/10 to-indigo-500/10 border border-sky-500/15 dark:border-sky-500/30 text-sky-600 dark:text-sky-300">

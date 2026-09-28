@@ -27,7 +27,7 @@ function About() {
             className="text-[11px] font-semibold uppercase tracking-[0.24em] text-sky-500"
             initial={{ opacity: 0, y: 10 }}
             whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ margin: "-20% 0px -10%", once: false }}
+            viewport={{ margin: "0px 0px -40px 0px", amount: 0.15, once: false }}
             transition={{ duration: 0.4 }}
           >
             About the system
@@ -37,7 +37,7 @@ function About() {
             className="mt-3 text-2xl sm:text-3xl md:text-4xl font-semibold tracking-tight text-slate-900 dark:text-slate-50"
             initial={{ opacity: 0, y: 14 }}
             whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ margin: "-20% 0px -10%", once: false }}
+            viewport={{ margin: "0px 0px -40px 0px", amount: 0.15, once: false }}
             transition={{ duration: 0.45 }}
           >
             The operating layer{" "}
@@ -50,7 +50,7 @@ function About() {
             className="mt-4 text-sm md:text-base text-slate-600 dark:text-slate-300 leading-relaxed"
             initial={{ opacity: 0, y: 14 }}
             whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ margin: "-20% 0px -10%", once: false }}
+            viewport={{ margin: "0px 0px -40px 0px", amount: 0.15, once: false }}
             transition={{ duration: 0.45, delay: 0.08 }}
           >
             From first‑year breadboard experiments to final‑year capstones,
@@ -64,10 +64,10 @@ function About() {
           {blocks.map((b, idx) => (
             <motion.div
               key={b.title}
-              className="relative rounded-2xl border border-slate-200 bg-white/95 px-5 py-6 shadow-sm hover:shadow-lg transition-all dark:border-slate-800 dark:bg-slate-900/90"
+              className="relative rounded-2xl border border-slate-200 bg-white/95 px-5 py-6 shadow-sm hover:shadow-lg transition-shadow transition-colors dark:border-slate-800 dark:bg-slate-900/90"
               initial={{ opacity: 0, y: 26 }}
               whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ margin: "-20% 0px -10%", once: false }}
+              viewport={{ margin: "0px 0px -40px 0px", amount: 0.15, once: false }}
               transition={{ duration: 0.45, delay: 0.08 * idx }}
             >
               <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-sky-400/60 to-transparent opacity-70" />
@@ -89,7 +89,7 @@ function About() {
           className="mt-8 sm:mt-10 flex flex-wrap justify-center gap-3 text-[11px]"
           initial={{ opacity: 0, y: 18 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ margin: "-20% 0px -10%", once: false }}
+          viewport={{ margin: "0px 0px -40px 0px", amount: 0.15, once: false }}
           transition={{ duration: 0.45 }}
         >
           {[

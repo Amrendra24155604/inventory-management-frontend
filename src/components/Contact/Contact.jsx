@@ -27,7 +27,7 @@ function Contact() {
           className="text-center mb-10"
           initial={{ opacity: 0, y: 18 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ margin: "-20% 0px -10%", once: false }}
+          viewport={{ margin: "0px 0px -40px 0px", amount: 0.15, once: false }}
           transition={{ duration: 0.45 }}
         >
           <p className="text-[11px] font-semibold uppercase tracking-[0.24em] text-sky-500">
@@ -49,7 +49,7 @@ function Contact() {
           className="relative rounded-3xl border border-slate-200 bg-white/95 p-6 sm:p-8 shadow-lg overflow-hidden dark:border-slate-800 dark:bg-slate-900/90"
           initial={{ opacity: 0, y: 26 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ margin: "-20% 0px -10%", once: false }}
+          viewport={{ margin: "0px 0px -40px 0px", amount: 0.15, once: false }}
           transition={{ duration: 0.5 }}
         >
           <div className="pointer-events-none absolute inset-0 rounded-3xl bg-gradient-to-br from-sky-500/10 via-transparent to-indigo-500/10" />
