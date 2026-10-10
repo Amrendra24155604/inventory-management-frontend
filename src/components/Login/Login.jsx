@@ -94,7 +94,7 @@ function Login() {
   };
 
   return (
-    <main className="min-h-screen w-full bg-transparent dark:bg-transparent flex items-center justify-center px-4">
+    <main className="min-h-[calc(100vh-2rem)] sm:min-h-screen w-full bg-transparent dark:bg-transparent flex items-start sm:items-center justify-center px-4 pt-1 sm:pt-0">
       {/* subtle background to match LandingPage */}
       <div className="fixed inset-0 -z-10">
         <div className="pointer-events-none absolute -top-24 -left-16 h-56 w-56 rounded-full bg-sky-400/20 blur-3xl dark:bg-sky-500/25" />
@@ -102,7 +102,7 @@ function Login() {
       </div>
 
       <div className="relative w-full max-w-md">
-        <div className="rounded-3xl bg-white/90 dark:bg-slate-900/95 border border-slate-200/80 dark:border-slate-800/80 shadow-xl shadow-slate-900/5 px-6 py-7 sm:px-8 sm:py-8 backdrop-blur-md">
+        <div className="rounded-3xl bg-white/90 dark:bg-slate-900/95 border border-slate-200/80 dark:border-slate-800/80 shadow-xl shadow-slate-900/5 px-5 py-5 sm:px-8 sm:py-8 backdrop-blur-md">
           {/* badge */}
           <div className="flex items-center justify-center mb-4">
             <span className="inline-flex items-center gap-2 rounded-full px-3 py-1 bg-sky-50 text-sky-700 text-[11px] font-semibold tracking-[0.18em] uppercase dark:bg-sky-900/40 dark:text-sky-300">

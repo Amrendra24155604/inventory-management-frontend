@@ -68,7 +68,7 @@ function AppShell({ user }) {
       />
       {!hideChrome && <Header user={user} />}
 
-      <main className="flex-1 pt-16 pb-8">
+      <main className={`flex-1 ${hideChrome ? "pt-2 sm:pt-10 pb-6" : "pt-16 pb-8"}`}>
         <Routes>
           <Route path="/" element={<LandingPage />} />
           <Route path="/login" element={<Login />} />
