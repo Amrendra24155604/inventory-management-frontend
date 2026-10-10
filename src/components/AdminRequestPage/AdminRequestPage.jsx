@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { FaCheckCircle, FaTimesCircle } from "react-icons/fa";
+import { authenticatedFetch } from "../../utils/auth.js";
 
 export default function ViewAdminRequests() {
    const API_PORT= import.meta.env.VITE_API_PORT;
@@ -10,15 +11,10 @@ export default function ViewAdminRequests() {
   const [actioningId, setActioningId] = useState(null);
   const [adminRequestMessage, setAdminRequestMessage] = useState("");
 
-  const token = localStorage.getItem("token");
-
   const fetchRequests = async () => {
     setLoading(true);
     try {
-      const res = await fetch(`${API_PORT}/api/v1/auth/admin/requests`, {
-        headers: { Authorization: `Bearer ${token}` },
-        credentials: "include",
-      });
+      const res = await authenticatedFetch(`${API_PORT}/api/v1/auth/admin/requests`);
       const data = await res.json();
       if (!data.success) throw new Error(data.message);
       setRequests(data.requests);
@@ -37,13 +33,11 @@ export default function ViewAdminRequests() {
   const handleAction = async (targetUserId, action) => {
     setActioningId(targetUserId);
     try {
-      const res = await fetch(`${API_PORT}/api/v1/auth/admin/handle-request`, {
+      const res = await authenticatedFetch(`${API_PORT}/api/v1/auth/admin/handle-request`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
         },
-        credentials: "include",
         body: JSON.stringify({ targetUserId, action }),
       });
       const data = await res.json();

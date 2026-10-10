@@ -7,6 +7,7 @@ import {
   FaPauseCircle,
 } from "react-icons/fa";
 import { motion, AnimatePresence } from "framer-motion";
+import { authenticatedFetch } from "../../utils/auth.js";
 
 export default function BorrowList() {
   const [requests, setRequests] = useState([]);
@@ -34,7 +35,7 @@ export default function BorrowList() {
   };
 
   useEffect(() => {
-    fetch(`${API_PORT}/api/v1/auth/my`, { credentials: "include" })
+    authenticatedFetch(`${API_PORT}/api/v1/auth/my`)
       .then((res) => res.json())
       .then((data) => setRequests(data?.data || []))
       .catch((err) => console.error("Failed to fetch borrow requests:", err));
@@ -74,9 +75,8 @@ export default function BorrowList() {
     }));
 
     try {
-      const res = await fetch(`${API_PORT}/api/v1/auth/${returningId}/return`, {
+      const res = await authenticatedFetch(`${API_PORT}/api/v1/auth/${returningId}/return`, {
         method: "PATCH",
-        credentials: "include",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ items: filteredItems }),
       });
@@ -92,9 +92,7 @@ export default function BorrowList() {
       setAdminRequestMessage("✅ Return request submitted successfully!");
       setTimeout(() => setAdminRequestMessage(""), 4000);
 
-      const updated = await fetch(`${API_PORT}/api/v1/auth/my`, {
-        credentials: "include",
-      });
+      const updated = await authenticatedFetch(`${API_PORT}/api/v1/auth/my`);
       const data = await updated.json();
       setRequests(data?.data || []);
     } catch (err) {

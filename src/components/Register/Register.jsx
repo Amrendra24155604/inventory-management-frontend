@@ -12,7 +12,7 @@ function Register() {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
-  const API_PORT = import.meta.env.VITE_API_PORT;
+  const API_PORT = (import.meta.env.VITE_API_PORT || "http://localhost:8000").trim();
 
   const handleRegister = async () => {
     setErrorMessages([]);
@@ -71,19 +71,16 @@ function Register() {
       const data = await response.json();
 
       if (response.ok) {
-        const token = data.data?.accessToken || data.accessToken;
-        const refresh = data.data?.refreshToken || data.refreshToken;
-        const regUser = data.data?.user || data.user;
+        const payload = data.data || data;
+        const token = payload.accessToken;
+        const refresh = payload.refreshToken;
+        const regUser = payload.user;
         if (token) localStorage.setItem("accessToken", token);
         if (refresh) localStorage.setItem("refreshToken", refresh);
         if (regUser) localStorage.setItem("cachedUser", JSON.stringify(regUser));
         localStorage.setItem("loginExpiry", Date.now() + 90 * 24 * 60 * 60 * 1000);
         localStorage.setItem("justRegistered", "true");
         window.location.href = "/";
-      } else if (response.status === 409) {
-        setErrorMessages([
-          "Account already exists. Please log in instead.",
-        ]);
       } else {
         const messages = Array.isArray(data.errors)
           ? data.errors
@@ -92,7 +89,7 @@ function Register() {
       }
     } catch (error) {
       console.error("Google registration error:", error);
-      setErrorMessages(["Google registration failed. Please try again."]);
+      setErrorMessages([error.message || "Google registration failed. Please try again."]);
     } finally {
       setLoading(false);
     }

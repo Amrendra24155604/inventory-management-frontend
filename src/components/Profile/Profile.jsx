@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { authenticatedFetch } from "../../utils/auth.js";
 
 function CompleteProfile() {
   const API_PORT = import.meta.env.VITE_API_PORT;
@@ -30,9 +31,8 @@ function CompleteProfile() {
   useEffect(() => {
     const fetchProfile = async () => {
       try {
-        const response = await fetch(`${API_PORT}/api/v1/auth/current-user`, {
+        const response = await authenticatedFetch(`${API_PORT}/api/v1/auth/current-user`, {
           method: "POST",
-          credentials: "include",
         });
         const data = await response.json();
         if (response.ok && data.data) {
@@ -60,7 +60,7 @@ function CompleteProfile() {
         const formData = new FormData();
         formData.append("photos", photo);
 
-        const uploadRes = await fetch(`${API_PORT}/api/v1/upload`, {
+        const uploadRes = await authenticatedFetch(`${API_PORT}/api/v1/upload`, {
           method: "POST",
           body: formData,
         });
@@ -70,12 +70,11 @@ function CompleteProfile() {
         }
       }
 
-      const response = await fetch(
+      const response = await authenticatedFetch(
         `${API_PORT}/api/v1/auth/complete-profile`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          credentials: "include",
           body: JSON.stringify({ name, rollNumber, domain, photoUrl }),
         }
       );

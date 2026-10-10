@@ -10,7 +10,7 @@ import {
   FaExclamationTriangle,
   FaUser, // Added for profile icon
 } from "react-icons/fa";
-import { clearAuthData } from "../../utils/auth.js";
+import { clearAuthData, authenticatedFetch } from "../../utils/auth.js";
 
 function Sidebar({ isOpen, onClose, user, activeSection, onNavClick }) {
   const API_PORT = import.meta.env.VITE_API_PORT;
@@ -24,11 +24,10 @@ function Sidebar({ isOpen, onClose, user, activeSection, onNavClick }) {
   // Fetch admin requests if user is admin
   useEffect(() => {
     const fetchAdminRequests = async () => {
-      if (user?.isAdmin) {
+      if (user?.role === "admin" || user?.isAdmin) {
         try {
-          const res = await fetch(`${API_PORT}/api/v1/auth/admin-requests`, {
+          const res = await authenticatedFetch(`${API_PORT}/api/v1/auth/admin/requests`, {
             method: "GET",
-            credentials: "include",
           });
           if (res.ok) {
             const data = await res.json();
@@ -55,9 +54,8 @@ function Sidebar({ isOpen, onClose, user, activeSection, onNavClick }) {
 
   const handleLogout = async () => {
     try {
-      await fetch(`${API_PORT}/api/v1/auth/logout`, {
+      await authenticatedFetch(`${API_PORT}/api/v1/auth/logout`, {
         method: "POST",
-        credentials: "include",
       });
     } catch (err) {
       console.error("Error during logout:", err);
@@ -69,9 +67,8 @@ function Sidebar({ isOpen, onClose, user, activeSection, onNavClick }) {
 
   const handleAdminRequest = async () => {
     try {
-      const res = await fetch(`${API_PORT}/api/v1/auth/request-admin`, {
+      const res = await authenticatedFetch(`${API_PORT}/api/v1/auth/request-admin`, {
         method: "POST",
-        credentials: "include",
       });
       const data = await res.json();
       setAdminRequestMessage(data.message || "Request sent.");
@@ -83,9 +80,8 @@ function Sidebar({ isOpen, onClose, user, activeSection, onNavClick }) {
 
   const handleLeaveAdmin = async () => {
     try {
-      const res = await fetch(`${API_PORT}/api/v1/auth/leave-admin`, {
+      const res = await authenticatedFetch(`${API_PORT}/api/v1/auth/leave-admin`, {
         method: "POST",
-        credentials: "include",
       });
       const data = await res.json();
       if (res.ok) {
@@ -286,12 +282,13 @@ function Sidebar({ isOpen, onClose, user, activeSection, onNavClick }) {
                             <button
                               onClick={async () => {
                                 try {
-                                  await fetch(`${API_PORT}/api/v1/auth/approve-admin/${req.id}`, {
+                                  await authenticatedFetch(`${API_PORT}/api/v1/auth/admin/handle-request`, {
                                     method: "POST",
-                                    credentials: "include",
+                                    headers: { "Content-Type": "application/json" },
+                                    body: JSON.stringify({ targetUserId: req._id || req.id, action: "accept" }),
                                   });
                                   setAdminRequests((prev) =>
-                                    prev.filter((r) => r.id !== req.id)
+                                    prev.filter((r) => (r._id || r.id) !== (req._id || req.id))
                                   );
                                 } catch (err) {
                                   console.error("Approve failed:", err);
@@ -304,12 +301,13 @@ function Sidebar({ isOpen, onClose, user, activeSection, onNavClick }) {
                             <button
                               onClick={async () => {
                                 try {
-                                  await fetch(`${API_PORT}/api/v1/auth/reject-admin/${req.id}`, {
+                                  await authenticatedFetch(`${API_PORT}/api/v1/auth/admin/handle-request`, {
                                     method: "POST",
-                                    credentials: "include",
+                                    headers: { "Content-Type": "application/json" },
+                                    body: JSON.stringify({ targetUserId: req._id || req.id, action: "decline" }),
                                   });
                                   setAdminRequests((prev) =>
-                                    prev.filter((r) => r.id !== req.id)
+                                    prev.filter((r) => (r._id || r.id) !== (req._id || req.id))
                                   );
                                 } catch (err) {
                                   console.error("Reject failed:", err);

@@ -1,6 +1,7 @@
 import { useEffect, useState, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { FaUndo } from "react-icons/fa";
+import { authenticatedFetch } from "../../utils/auth.js";
 
 export default function Inventory() {
   const API_PORT = import.meta.env.VITE_API_PORT;
@@ -38,7 +39,7 @@ export default function Inventory() {
   const [successMessage, setSuccessMessage] = useState("");
 
   useEffect(() => {
-    fetch(`${API_PORT}/api/v1/auth/productList`, { credentials: "include" })
+    authenticatedFetch(`${API_PORT}/api/v1/auth/productList`)
       .then((res) => res.json())
       .then((data) => setProducts(data?.data || data))
       .catch((err) => console.error("Failed to fetch products:", err));
@@ -47,7 +48,7 @@ export default function Inventory() {
   }, [API_PORT]);
 
   const fetchBorrowedRequests = () => {
-    fetch(`${API_PORT}/api/v1/auth/my`, { credentials: "include" })
+    authenticatedFetch(`${API_PORT}/api/v1/auth/my`)
       .then((res) => res.json())
       .then((data) => setBorrowedRequests(data?.data || []))
       .catch((err) => console.error("Failed to fetch borrow requests:", err));
@@ -103,9 +104,8 @@ export default function Inventory() {
     if (items.length === 0) return;
 
     try {
-      const res = await fetch(`${API_PORT}/api/v1/auth/borrow`, {
+      const res = await authenticatedFetch(`${API_PORT}/api/v1/auth/borrow`, {
         method: "POST",
-        credentials: "include",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           items,
@@ -175,9 +175,8 @@ export default function Inventory() {
     }));
 
     try {
-      await fetch(`${API_PORT}/api/v1/auth/${returningId}/return`, {
+      await authenticatedFetch(`${API_PORT}/api/v1/auth/${returningId}/return`, {
         method: "PATCH",
-        credentials: "include",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ items: filteredItems }),
       });

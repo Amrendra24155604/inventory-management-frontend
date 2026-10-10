@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { FaEdit, FaTrashAlt, FaTimes } from "react-icons/fa";
 import { AnimatePresence, motion } from "framer-motion";
+import { authenticatedFetch } from "../../utils/auth.js";
 
 export default function AdminProductPage({ menuOpen = false }) {
   const API_PORT = import.meta.env.VITE_API_PORT;
@@ -51,10 +52,7 @@ export default function AdminProductPage({ menuOpen = false }) {
 
   const fetchProducts = async () => {
     try {
-      const res = await fetch(`${API_PORT}/api/v1/auth/productList`, {
-        headers: { Authorization: `Bearer ${token}` },
-        credentials: "include",
-      });
+      const res = await authenticatedFetch(`${API_PORT}/api/v1/auth/productList`);
       if (!res.ok) throw new Error("Failed to fetch products");
       const data = await res.json();
       setProducts(data.data || data);
@@ -129,13 +127,11 @@ export default function AdminProductPage({ menuOpen = false }) {
     const method = editingId ? "PUT" : "POST";
 
     try {
-      const res = await fetch(url, {
+      const res = await authenticatedFetch(url, {
         method,
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
         },
-        credentials: "include",
         body: JSON.stringify({ ...form, photoUrl }),
       });
 
@@ -180,12 +176,10 @@ export default function AdminProductPage({ menuOpen = false }) {
     setLoadingActions(prev => ({ ...prev, [`delete-${deleteTargetId}`]: true }));
 
     try {
-      const res = await fetch(
+      const res = await authenticatedFetch(
         `${API_PORT}/api/v1/auth/products/${deleteTargetId}`,
         {
           method: "DELETE",
-          headers: { Authorization: `Bearer ${token}` },
-          credentials: "include",
         }
       );
 
@@ -407,7 +401,7 @@ export default function AdminProductPage({ menuOpen = false }) {
         {/* Form Section */}
         <div className="w-full max-w-4xl mx-auto">
           <h2 className="text-xl sm:text-2xl font-semibold mb-6 sm:mb-8 text-center text-slate-900 dark:text-slate-50">
-            {editingId ? "✏️" : "➕"}{" "}
+            {editingId ? "" : ""}{" "}
             <span className="bg-gradient-to-r from-sky-500 to-indigo-500 bg-clip-text text-transparent">
               {editingId ? "Edit Product" : "Create New Product"}
             </span>
@@ -575,7 +569,7 @@ export default function AdminProductPage({ menuOpen = false }) {
                 >
                   {loadingActions[editingId ? `edit-${editingId}` : "create"]
                     ? "Loading..."
-                    : editingId ? "✅ Update Product" : "➕ Create Product"
+                    : editingId ? "Update Product" : "Create Product"
                   }
                 </button>
               </div>

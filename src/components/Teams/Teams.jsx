@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
+import { authenticatedFetch } from "../../utils/auth.js";
 
 const domainOptions = [
   "Web Development",
@@ -22,16 +23,15 @@ function Teams() {
   const [user, setUser] = useState(null);
 
   useEffect(() => {
-    fetch(`${API_PORT}/api/v1/auth/teams`)
+    authenticatedFetch(`${API_PORT}/api/v1/auth/teams`)
       .then((res) => res.json())
       .then((data) => {
         if (data.success) setTeams(data.teams);
       })
       .catch(() => { });
 
-    fetch(`${API_PORT}/api/v1/auth/current-user`, {
+    authenticatedFetch(`${API_PORT}/api/v1/auth/current-user`, {
       method: "POST",
-      credentials: "include",
     })
       .then((res) => res.json())
       .then((data) => {

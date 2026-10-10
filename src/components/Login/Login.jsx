@@ -4,7 +4,7 @@ import { auth, provider } from "../../../firebase.js";
 import { signInWithPopup } from "firebase/auth";
 
 function Login() {
-  const API_PORT = import.meta.env.VITE_API_PORT;
+  const API_PORT = (import.meta.env.VITE_API_PORT || "http://localhost:8000").trim();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");

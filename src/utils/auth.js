@@ -1,6 +1,4 @@
-// utils/auth.js
-
-const API_PORT = import.meta.env.VITE_API_PORT || "http://localhost:8000";
+const API_PORT = (import.meta.env.VITE_API_PORT || "http://localhost:8000").trim();
 
 /**
  * Gets cached user from localStorage immediately (0ms latency for instant UI rendering)

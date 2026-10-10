@@ -1,5 +1,6 @@
 import { useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
+import { authenticatedFetch } from "../../utils/auth.js";
 
 function MemberProfile() {
   const API_PORT = import.meta.env.VITE_API_PORT;
@@ -12,7 +13,7 @@ function MemberProfile() {
   useEffect(() => {
     const fetchProfile = async () => {
       try {
-        const res = await fetch(`${API_PORT}/api/v1/auth/profile/${rollNumber}`);
+        const res = await authenticatedFetch(`${API_PORT}/api/v1/auth/profile/${rollNumber}`);
         const data = await res.json();
 
         if (res.ok && data.success) {

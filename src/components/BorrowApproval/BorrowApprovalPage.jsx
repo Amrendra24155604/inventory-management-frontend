@@ -9,6 +9,7 @@ import {
   FaExchangeAlt,
   FaExclamationTriangle,
 } from "react-icons/fa";
+import { authenticatedFetch } from "../../utils/auth.js";
 
 const statusOptions = [
   "pending",
@@ -62,7 +63,7 @@ export default function AdminBorrowApproval() {
           ? `${API_PORT}/api/v1/auth/borrow/expired-approved`
           : `${API_PORT}/api/v1/auth/all`;
 
-      const res = await fetch(endpoint, { credentials: "include" });
+      const res = await authenticatedFetch(endpoint);
       const data = await res.json();
       setRequests(data?.data || []);
     } catch {
@@ -92,9 +93,8 @@ export default function AdminBorrowApproval() {
     try {
       setLoadingActions((prev) => ({ ...prev, [`${id}-${type}`]: true }));
 
-      const res = await fetch(`${API_PORT}/api/v1/auth${endpoint}`, {
+      const res = await authenticatedFetch(`${API_PORT}/api/v1/auth${endpoint}`, {
         method,
-        credentials: "include",
       });
       const result = await res.json();
 
