@@ -6,9 +6,23 @@ import { authenticatedFetch } from "../../utils/auth.js";
 export default function Inventory() {
   const API_PORT = import.meta.env.VITE_API_PORT;
 
-  const [products, setProducts] = useState([]);
+  const [products, setProducts] = useState(() => {
+    try {
+      const cached = localStorage.getItem("cachedProducts");
+      return cached ? JSON.parse(cached) : [];
+    } catch {
+      return [];
+    }
+  });
   const [selectedProducts, setSelectedProducts] = useState({});
-  const [borrowedRequests, setBorrowedRequests] = useState([]);
+  const [borrowedRequests, setBorrowedRequests] = useState(() => {
+    try {
+      const cached = localStorage.getItem("cachedMyBorrows");
+      return cached ? JSON.parse(cached) : [];
+    } catch {
+      return [];
+    }
+  });
 
   const [returningId, setReturningId] = useState(null);
   const [returnItems, setReturnItems] = useState([]);
@@ -41,7 +55,13 @@ export default function Inventory() {
   useEffect(() => {
     authenticatedFetch(`${API_PORT}/api/v1/auth/productList`)
       .then((res) => res.json())
-      .then((data) => setProducts(data?.data || data))
+      .then((data) => {
+        const list = data?.data || data || [];
+        setProducts(list);
+        try {
+          localStorage.setItem("cachedProducts", JSON.stringify(list));
+        } catch {}
+      })
       .catch((err) => console.error("Failed to fetch products:", err));
 
     fetchBorrowedRequests();
@@ -50,7 +70,13 @@ export default function Inventory() {
   const fetchBorrowedRequests = () => {
     authenticatedFetch(`${API_PORT}/api/v1/auth/my`)
       .then((res) => res.json())
-      .then((data) => setBorrowedRequests(data?.data || []))
+      .then((data) => {
+        const list = data?.data || [];
+        setBorrowedRequests(list);
+        try {
+          localStorage.setItem("cachedMyBorrows", JSON.stringify(list));
+        } catch {}
+      })
       .catch((err) => console.error("Failed to fetch borrow requests:", err));
   };
 

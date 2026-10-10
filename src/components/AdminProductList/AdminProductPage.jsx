@@ -5,7 +5,14 @@ import { authenticatedFetch } from "../../utils/auth.js";
 
 export default function AdminProductPage({ menuOpen = false }) {
   const API_PORT = import.meta.env.VITE_API_PORT;
-  const [products, setProducts] = useState([]);
+  const [products, setProducts] = useState(() => {
+    try {
+      const cached = localStorage.getItem("cachedProducts");
+      return cached ? JSON.parse(cached) : [];
+    } catch {
+      return [];
+    }
+  });
 
   const [form, setForm] = useState({
     name: "",
@@ -28,7 +35,7 @@ export default function AdminProductPage({ menuOpen = false }) {
   const [restoreAvailable, setRestoreAvailable] = useState(false);
   const [loadingActions, setLoadingActions] = useState({});
 
-  const token = localStorage.getItem("token");
+  const token = localStorage.getItem("accessToken");
 
   // ActionButton Component (AdminBorrowApproval Style)
   const ActionButton = ({ label, color, loading, onClick }) => (
@@ -55,7 +62,11 @@ export default function AdminProductPage({ menuOpen = false }) {
       const res = await authenticatedFetch(`${API_PORT}/api/v1/auth/productList`);
       if (!res.ok) throw new Error("Failed to fetch products");
       const data = await res.json();
-      setProducts(data.data || data);
+      const list = data.data || data || [];
+      setProducts(list);
+      try {
+        localStorage.setItem("cachedProducts", JSON.stringify(list));
+      } catch {}
     } catch (err) {
       console.error(err);
       setError("Unable to load products. Please check your access.");

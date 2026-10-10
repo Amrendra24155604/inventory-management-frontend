@@ -10,7 +10,14 @@ import { motion, AnimatePresence } from "framer-motion";
 import { authenticatedFetch } from "../../utils/auth.js";
 
 export default function BorrowList() {
-  const [requests, setRequests] = useState([]);
+  const [requests, setRequests] = useState(() => {
+    try {
+      const cached = localStorage.getItem("cachedMyBorrows");
+      return cached ? JSON.parse(cached) : [];
+    } catch {
+      return [];
+    }
+  });
   const [returningId, setReturningId] = useState(null);
   const [returnItems, setReturnItems] = useState([]);
   const [selectedStatus, setSelectedStatus] = useState("approved");
@@ -37,7 +44,13 @@ export default function BorrowList() {
   useEffect(() => {
     authenticatedFetch(`${API_PORT}/api/v1/auth/my`)
       .then((res) => res.json())
-      .then((data) => setRequests(data?.data || []))
+      .then((data) => {
+        const list = data?.data || [];
+        setRequests(list);
+        try {
+          localStorage.setItem("cachedMyBorrows", JSON.stringify(list));
+        } catch {}
+      })
       .catch((err) => console.error("Failed to fetch borrow requests:", err));
   }, [API_PORT]);
 

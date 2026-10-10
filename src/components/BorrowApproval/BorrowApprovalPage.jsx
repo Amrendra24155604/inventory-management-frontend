@@ -43,7 +43,14 @@ const statusLabels = {
 
 export default function AdminBorrowApproval() {
   const API_PORT = import.meta.env.VITE_API_PORT;
-  const [requests, setRequests] = useState([]);
+  const [requests, setRequests] = useState(() => {
+    try {
+      const cached = localStorage.getItem("cachedAllBorrows");
+      return cached ? JSON.parse(cached) : [];
+    } catch {
+      return [];
+    }
+  });
   const [selectedStatus, setSelectedStatus] = useState("pending");
   const [adminRequestMessage, setAdminRequestMessage] = useState("");
   const [loadingActions, setLoadingActions] = useState({});
@@ -65,7 +72,11 @@ export default function AdminBorrowApproval() {
 
       const res = await authenticatedFetch(endpoint);
       const data = await res.json();
-      setRequests(data?.data || []);
+      const list = data?.data || [];
+      setRequests(list);
+      try {
+        localStorage.setItem("cachedAllBorrows", JSON.stringify(list));
+      } catch {}
     } catch {
       showMessage("❌ Failed to fetch borrow requests.");
     }

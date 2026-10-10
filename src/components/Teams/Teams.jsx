@@ -18,15 +18,27 @@ const domainOptions = [
 
 function Teams() {
   const API_PORT = import.meta.env.VITE_API_PORT;
-  const [teams, setTeams] = useState({});
-  const [selectedTeam, setSelectedTeam] = useState("");
+  const [teams, setTeams] = useState(() => {
+    try {
+      const cached = localStorage.getItem("cachedTeams");
+      return cached ? JSON.parse(cached) : {};
+    } catch {
+      return {};
+    }
+  });
+  const [selectedTeam, setSelectedTeam] = useState(domainOptions[0]);
   const [user, setUser] = useState(null);
 
   useEffect(() => {
     authenticatedFetch(`${API_PORT}/api/v1/auth/teams`)
       .then((res) => res.json())
       .then((data) => {
-        if (data.success) setTeams(data.teams);
+        if (data.success) {
+          setTeams(data.teams);
+          try {
+            localStorage.setItem("cachedTeams", JSON.stringify(data.teams));
+          } catch {}
+        }
       })
       .catch(() => { });
 

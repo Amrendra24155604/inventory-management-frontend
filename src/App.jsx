@@ -30,6 +30,16 @@ import { MdApproval } from "react-icons/md";
 import { ThemeProvider } from "./context/ThemeContext.jsx";
 import { getCachedUser, fetchCurrentUser } from "./utils/auth.js";
 
+function ScrollToTop() {
+  const { pathname } = useLocation();
+
+  useEffect(() => {
+    window.scrollTo({ top: 0, left: 0, behavior: "instant" });
+  }, [pathname]);
+
+  return null;
+}
+
 function AppShell({ user }) {
   const location = useLocation();
 
@@ -59,6 +69,7 @@ function AppShell({ user }) {
 
   return (
     <div className="min-h-screen bg-slate-50 text-slate-900 dark:bg-slate-950 dark:text-slate-100 transition-colors duration-300 flex flex-col relative z-0">
+      <ScrollToTop />
       <ShapeGrid 
         speed={0.5}
         squareSize={40}
