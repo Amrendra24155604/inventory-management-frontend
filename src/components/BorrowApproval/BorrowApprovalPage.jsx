@@ -54,10 +54,14 @@ export default function AdminBorrowApproval() {
   const [selectedStatus, setSelectedStatus] = useState("pending");
   const [adminRequestMessage, setAdminRequestMessage] = useState("");
   const [loadingActions, setLoadingActions] = useState({});
-
-  useEffect(() => {
-    fetchRequests();
-  }, []);
+  const [isInitialLoading, setIsInitialLoading] = useState(() => {
+    try {
+      const cached = localStorage.getItem("cachedAllBorrows");
+      return !cached || JSON.parse(cached).length === 0;
+    } catch {
+      return true;
+    }
+  });
 
   useEffect(() => {
     fetchRequests();
@@ -74,11 +78,15 @@ export default function AdminBorrowApproval() {
       const data = await res.json();
       const list = data?.data || [];
       setRequests(list);
-      try {
-        localStorage.setItem("cachedAllBorrows", JSON.stringify(list));
-      } catch {}
+      if (selectedStatus !== "expired") {
+        try {
+          localStorage.setItem("cachedAllBorrows", JSON.stringify(list));
+        } catch {}
+      }
     } catch {
       showMessage("❌ Failed to fetch borrow requests.");
+    } finally {
+      setIsInitialLoading(false);
     }
   };
 
@@ -196,8 +204,13 @@ export default function AdminBorrowApproval() {
 
       {/* cards */}
       <div className="grid grid-cols-1 gap-5">
-        {filteredRequests.length === 0 ? (
-          <div className="text-center text-xs sm:text-sm text-slate-500 dark:text-slate-400">
+        {isInitialLoading && filteredRequests.length === 0 ? (
+          <div className="flex flex-col items-center justify-center py-12 text-slate-400">
+            <div className="w-6 h-6 border-2 border-sky-500 border-t-transparent rounded-full animate-spin mb-2" />
+            <span className="text-xs">Loading requests...</span>
+          </div>
+        ) : filteredRequests.length === 0 ? (
+          <div className="text-center text-xs sm:text-sm text-slate-500 dark:text-slate-400 py-6">
             {selectedStatus === "return"
               ? "No return requests at the moment."
               : selectedStatus === "returned"

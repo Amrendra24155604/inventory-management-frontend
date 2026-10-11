@@ -57,6 +57,15 @@ export default function AdminProductPage({ menuOpen = false }) {
     </motion.button>
   );
 
+  const [isInitialLoading, setIsInitialLoading] = useState(() => {
+    try {
+      const cached = localStorage.getItem("cachedProducts");
+      return !cached || JSON.parse(cached).length === 0;
+    } catch {
+      return true;
+    }
+  });
+
   const fetchProducts = async () => {
     try {
       const res = await authenticatedFetch(`${API_PORT}/api/v1/auth/productList`);
@@ -70,6 +79,8 @@ export default function AdminProductPage({ menuOpen = false }) {
     } catch (err) {
       console.error(err);
       setError("Unable to load products. Please check your access.");
+    } finally {
+      setIsInitialLoading(false);
     }
   };
 
@@ -273,9 +284,22 @@ export default function AdminProductPage({ menuOpen = false }) {
             </span>
           </h2>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-5 sm:gap-6">
-            {products.map((product) => (
-              <motion.div
+          {isInitialLoading && products.length === 0 ? (
+            <div className="flex flex-col items-center justify-center py-12 text-slate-400">
+              <div className="w-7 h-7 border-2 border-sky-500 border-t-transparent rounded-full animate-spin mb-3" />
+              <span className="text-sm">Loading products...</span>
+            </div>
+          ) : products.length === 0 ? (
+            <div className="text-center py-12 text-slate-500 dark:text-slate-400">
+              <div className="w-24 h-24 mx-auto mb-4 bg-slate-200 dark:bg-slate-800 rounded-2xl flex items-center justify-center text-3xl">
+                📦
+              </div>
+              <p className="text-lg">No products found</p>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-5 sm:gap-6">
+              {products.map((product) => (
+                <motion.div
                 key={product._id}
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -396,14 +420,6 @@ export default function AdminProductPage({ menuOpen = false }) {
                 </div>
               </motion.div>
             ))}
-          </div>
-
-          {products.length === 0 && (
-            <div className="text-center py-12 text-slate-500 dark:text-slate-400">
-              <div className="w-24 h-24 mx-auto mb-4 bg-slate-200 dark:bg-slate-800 rounded-2xl flex items-center justify-center text-3xl">
-                📦
-              </div>
-              <p className="text-lg">No products found</p>
             </div>
           )}
         </div>
