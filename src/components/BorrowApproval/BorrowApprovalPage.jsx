@@ -146,17 +146,25 @@ export default function AdminBorrowApproval() {
 
   const filteredRequests = requests.filter((req) => {
     if (selectedStatus === "returned") {
-      return req.status === "returned" || req.returnStatus === "partial";
+      // History: ONLY completely returned orders (not partial)
+      return (req.status === "returned" || req.returnStatus === "complete") && req.returnStatus !== "partial";
     }
     if (selectedStatus === "approved") {
-      return req.status === "approved" && req.returnStatus === "none";
+      return (
+        req.status === "approved" &&
+        req.returnStatus !== "pending" &&
+        req.returnStatus !== "complete"
+      );
     }
     if (selectedStatus === "return") {
-      const isReturnable = ["pending", "none", "partial"].includes(
-        req.returnStatus
-      );
-      const isValidStatus = !["on-hold", "declined"].includes(req.status);
-      return isReturnable && isValidStatus;
+      // Returns tab:
+      // - Pending return requests from users (shows "Approve return")
+      // - Partial returns with items still remaining (shows "Mark as returned")
+      // Fully returned orders move straight to History!
+      if (req.status === "returned" || req.returnStatus === "complete") {
+        return false;
+      }
+      return req.returnStatus === "pending" || req.returnStatus === "partial";
     }
     if (selectedStatus === "expired") {
       return (
@@ -344,6 +352,12 @@ export default function AdminBorrowApproval() {
                           {item.pendingReturn}
                         </div>
                       )}
+                      {item.quantityRequested - (item.quantityReturned || 0) > 0 && req.status !== "declined" && (
+                        <div className="text-amber-600 dark:text-amber-400">
+                          <span className="font-semibold">Remaining:</span>{" "}
+                          {item.quantityRequested - (item.quantityReturned || 0)}
+                        </div>
+                      )}
                       {item.product?.initialQuantity !== undefined && (
                         <div className="text-[10px] text-slate-500 dark:text-slate-400">
                           Stock: {item.product.quantityAvailable}/
@@ -384,8 +398,8 @@ export default function AdminBorrowApproval() {
                     </>
                   )}
 
-                {selectedStatus === "return" &&
-                  req.returnStatus === "pending" && (
+                {((selectedStatus === "return" || selectedStatus === "approved") &&
+                  req.returnStatus === "pending") && (
                     <ActionButton
                       label="✅ Approve return"
                       color="bg-emerald-600 hover:bg-emerald-500"
@@ -394,15 +408,15 @@ export default function AdminBorrowApproval() {
                     />
                   )}
 
-                {selectedStatus === "return" &&
-                  ["none", "partial"].includes(req.returnStatus) && (
-                    <ActionButton
-                      label="📦 Mark as returned"
-                      color="bg-sky-600 hover:bg-sky-500"
-                      loading={loadingActions[`${req._id}-returnDirect`]}
-                      onClick={() => handleAction(req._id, "returnDirect")}
-                    />
-                  )}
+                {((selectedStatus === "approved" && req.returnStatus !== "pending") ||
+                  (selectedStatus === "return" && req.returnStatus === "partial")) && (
+                  <ActionButton
+                    label="📦 Mark as returned"
+                    color="bg-sky-600 hover:bg-sky-500"
+                    loading={loadingActions[`${req._id}-returnDirect`]}
+                    onClick={() => handleAction(req._id, "returnDirect")}
+                  />
+                )}
 
                 {selectedStatus === "returned" && (
                   <ActionButton

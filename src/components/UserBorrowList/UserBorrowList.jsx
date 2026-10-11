@@ -69,29 +69,40 @@ export default function BorrowList() {
   };
 
   const handleReturnSubmit = async () => {
-    const nonZeroItems = returnItems.filter((item) => item.quantityReturned > 0);
+    const currentReq = requests.find((r) => r._id === returningId);
+    const validItems = returnItems
+      .filter((item) => {
+        const original = currentReq?.items?.find(
+          (i) => (i.product?._id || i.product) === item.product
+        );
+        const alreadyReturned = Number(original?.quantityReturned || 0);
+        const maxReturnable = Math.max(0, (original?.quantityRequested || 0) - alreadyReturned);
+        return item.quantityReturned > 0 && maxReturnable > 0;
+      })
+      .map((item) => {
+        const original = currentReq?.items?.find(
+          (i) => (i.product?._id || i.product) === item.product
+        );
+        const alreadyReturned = Number(original?.quantityReturned || 0);
+        const maxReturnable = Math.max(0, (original?.quantityRequested || 0) - alreadyReturned);
+        return {
+          product: item.product,
+          quantityReturned: Math.min(Number(item.quantityReturned), maxReturnable),
+          condition: item.condition,
+          notes: item.notes,
+        };
+      });
 
-    if (returnItems.length === 1 && nonZeroItems.length === 0) {
-      alert("You must return at least one item.");
+    if (validItems.length === 0) {
+      alert("Please enter a valid quantity greater than 0 for at least one remaining item.");
       return;
     }
-    if (returnItems.length > 1 && nonZeroItems.length === 0) {
-      alert("Please enter a valid quantity for at least one item.");
-      return;
-    }
-
-    const filteredItems = nonZeroItems.map((item) => ({
-      product: item.product,
-      quantityReturned: item.quantityReturned,
-      condition: item.condition,
-      notes: item.notes,
-    }));
 
     try {
       const res = await authenticatedFetch(`${API_PORT}/api/v1/auth/${returningId}/return`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ items: filteredItems }),
+        body: JSON.stringify({ items: validItems }),
       });
 
       if (!res.ok) {
@@ -280,15 +291,22 @@ export default function BorrowList() {
             </div>
 
             {/* Return button */}
-            {selectedStatus === "approved" && req.returnStatus !== "complete" && (
+            {selectedStatus === "approved" && req.returnStatus !== "complete" && req.status !== "returned" && (
               <div className="mt-5 text-center">
-                <button
-                  onClick={() => openReturnForm(req)}
-                  className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-full bg-gradient-to-r from-sky-500 to-indigo-500 px-5 py-2.5 text-xs sm:text-sm font-semibold text-white shadow-md hover:from-sky-600 hover:to-indigo-600 hover:shadow-lg transition"
-                >
-                  <FaUndo className="text-sm" />
-                  Return items
-                </button>
+                {req.returnStatus === "pending" ? (
+                  <span className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-amber-100 text-amber-800 dark:bg-amber-900/40 dark:text-amber-300 text-xs sm:text-sm font-medium shadow-sm">
+                    <FaClock className="text-xs" />
+                    Return pending admin approval
+                  </span>
+                ) : (
+                  <button
+                    onClick={() => openReturnForm(req)}
+                    className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-full bg-gradient-to-r from-sky-500 to-indigo-500 px-5 py-2.5 text-xs sm:text-sm font-semibold text-white shadow-md hover:from-sky-600 hover:to-indigo-600 hover:shadow-lg transition"
+                  >
+                    <FaUndo className="text-sm" />
+                    Return items
+                  </button>
+                )}
               </div>
             )}
 
@@ -314,6 +332,24 @@ export default function BorrowList() {
                     const alreadyReturned = original?.quantityReturned || 0;
                     const maxReturnable =
                       (original?.quantityRequested || 0) - alreadyReturned;
+
+                    if (maxReturnable <= 0) {
+                      return (
+                        <div
+                          key={item.product || `${req._id}-return-${index}`}
+                          className="flex flex-col md:flex-row gap-3 border border-slate-200/60 dark:border-slate-800 rounded-2xl p-4 bg-slate-100/50 dark:bg-slate-900/50 opacity-70"
+                        >
+                          <div className="flex-1 space-y-1">
+                            <h5 className="font-semibold text-slate-800 dark:text-slate-200 text-sm">
+                              {original?.product?.name || "Product"}
+                            </h5>
+                            <div className="text-xs text-emerald-600 dark:text-emerald-400 font-medium">
+                              ✓ Already fully returned ({alreadyReturned} of {original?.quantityRequested})
+                            </div>
+                          </div>
+                        </div>
+                      );
+                    }
 
                     return (
                       <div
